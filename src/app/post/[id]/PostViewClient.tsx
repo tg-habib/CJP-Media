@@ -14,13 +14,7 @@ import { formatDistanceToNow } from 'date-fns';
 import CommentsSection from '../../../components/CommentsSection';
 import { useFollow } from '../../../hooks/useFollow';
 import { toast } from 'sonner';
-
-const VerifiedBadge = () => (
-  <svg className="w-[15px] h-[15px] text-[#1d9bf0] ml-1" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.79-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.748 1.838 3.447-.075.313-.118.636-.118.97 0 2.21 1.71 4 3.918 4 .51 0 1-.097 1.454-.275C9.176 21.6 10.495 22.5 12 22.5c1.505 0 2.824-.9 3.348-2.275.456.178.945.275 1.454.275 2.21 0 3.918-1.79 3.918-4 0-.334-.043-.656-.118-.97 1.098-.7 1.838-1.987 1.838-3.447z" />
-    <path fill="#fff" d="M10.458 15.65c-.24 0-.48-.09-.66-.27l-2.45-2.45c-.36-.36-.36-.95 0-1.32.36-.36.95-.36 1.32 0l1.79 1.79 4.14-4.14c.36-.36.95-.36 1.32 0 .36.36.36.95 0 1.32l-4.8 4.8c-.18.18-.42.27-.66.27z" />
-  </svg>
-);
+import VerifiedBadge from '../../../components/VerifiedBadge';
 
 export default function PostViewClient({ id, initialPost, profile }: { id: string, initialPost: any, profile?: any }) {
   const router = useRouter();
@@ -41,6 +35,20 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
   useEffect(() => {
     window.scrollTo(0,0);
     if (!id) return;
+    
+    // Increment view count exactly once per load on client
+    const incrementView = async () => {
+      try {
+        const postRef = doc(db, 'posts', id);
+        await updateDoc(postRef, {
+          viewsCount: increment(1)
+        });
+      } catch (err) {
+        console.error("Failed to increment views:", err);
+      }
+    };
+    incrementView();
+
     const unsubPost = onSnapshot(doc(db, 'posts', id), (docSnap) => {
       if (docSnap.exists()) {
         const data = docSnap.data();
@@ -68,6 +76,17 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
     if (index !== currentImageIndex) {
       setCurrentImageIndex(index);
     }
+  };
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const handleBookmark = () => {
+    if (!user) {
+      toast.error("Please login to save posts");
+      return;
+    }
+    setIsBookmarked(!isBookmarked);
+    toast.success(isBookmarked ? "Removed from saved posts" : "Saved to your bookmarks");
   };
 
   const handleLike = async () => {
@@ -142,7 +161,7 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
   let timeAgo = "2h ago";
   if (post.createdAt) {
      try {
-       const date = typeof post.createdAt.toDate === 'function' ? post.createdAt.toDate() : post.createdAt;
+       const date = typeof post.createdAt.toDate === 'function' ? post.createdAt.toDate() : new Date(post.createdAt);
        timeAgo = formatDistanceToNow(date, { addSuffix: true }).replace("about ", "");
      } catch (e) {}
   }
@@ -192,22 +211,22 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
 
           <div className="w-full pb-20">
         {/* Profile Row */}
-        <div className="px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             <Link href="/profile" className="w-[36px] h-[36px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/20 flex items-center justify-center bg-[#4d6600] hover:scale-105 transition-transform">
+        <div className="px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+             <Link href="/profile" className="w-[48px] h-[48px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/50 flex items-center justify-center bg-gradient-to-br from-[#ccff00]/20 to-transparent hover:border-[#ccff00]/80 transition-colors shadow-[0_0_12px_rgba(204,255,0,0.3)] ring-2 ring-[#ccff00]/20 ring-offset-2 ring-offset-[#0a0a0a]">
                {pAvatarUrl ? (
                  <Image src={pAvatarUrl} alt={pName} fill className="object-cover" />
                ) : (
-                 <Flame className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2.5} />
+                 <Flame className="w-[24px] h-[24px] text-[#ccff00]" strokeWidth={2.5} />
                )}
              </Link>
              
              <div className="flex flex-col">
                 <Link href="/profile" className="flex items-center hover:text-[#ccff00] transition">
-                   <span className="font-bold text-white text-[15px] leading-none">{pName}</span>
-                   <VerifiedBadge />
+                   <span className="font-bold text-white text-[16px] tracking-tight leading-none">{pName}</span>
+                   <VerifiedBadge className="w-5 h-5 ml-1 drop-shadow-[0_0_4px_rgba(204,255,0,0.5)]" />
                 </Link>
-                <div className="text-[13px] text-white/50 flex items-center gap-1 mt-1">
+                <div className="text-[13px] text-white/40 flex items-center gap-1.5 mt-1 font-medium">
                    <span>{timeAgo}</span>
                    <span className="text-[10px]">•</span>
                    <Globe className="w-3.5 h-3.5" />
@@ -215,7 +234,7 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
                 </div>
              </div>
           </div>
-          <button onClick={toggleFollow} className={`h-8 px-4 rounded-full border font-bold text-[13px] transition-colors ${isFollowing ? 'border-white/20 text-white bg-white/10' : 'border-[#ccff00] text-[#ccff00] hover:bg-[#ccff00]/10'}`}>
+          <button onClick={toggleFollow} className={`h-9 px-5 rounded-full border font-bold text-[13px] transition-all hover:scale-105 active:scale-95 ${isFollowing ? 'border-white/20 text-white bg-white/10' : 'border-[#ccff00] text-black bg-[#ccff00] hover:bg-[#bbe600]'}`}>
             {isFollowing ? 'Following' : 'Follow'}
           </button>
         </div>
@@ -276,46 +295,44 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
         </div>
 
         {/* Text Content */}
-        <div className="px-4 pb-4 border-b border-white/[0.03]">
-          <h1 className="text-[22px] sm:text-[24px] font-bold text-white leading-[1.25] mb-4">
+        <div className="px-5 py-5 border-b border-white/[0.03]">
+          <h1 className="text-[26px] sm:text-[30px] font-extrabold text-white leading-[1.2] mb-4 tracking-tight">
             {post.title}
           </h1>
-          <p className="text-[15px] sm:text-[16px] text-white/60 italic font-serif leading-relaxed">
+          <p className="text-[16px] sm:text-[18px] text-white/70 italic font-serif leading-relaxed">
             "{post.roast || "Cockroach Janta Party Official Logo CJP a Voice of unemployed youth"}"
           </p>
         </div>
 
         {/* Tags */}
-        <div className="px-4 py-4 flex flex-wrap items-center gap-2 border-b border-white/[0.03]">
-           <span className="bg-[#cc6633] text-black text-[12px] font-bold px-3 py-1.5 rounded-md">
+        <div className="px-5 py-4 flex flex-wrap items-center gap-2 border-b border-white/[0.03]">
+           <Link href={`/category/${post.category || 'Politics'}`} className="bg-[#ccff00]/10 text-[#ccff00] text-[12px] uppercase font-black tracking-wide px-4 py-2 rounded-full line-clamp-1 hover:bg-[#ccff00]/20 transition-colors">
               {post.category || "Politics"}
-           </span>
-           <span className="bg-[#33cc33] text-black text-[12px] font-bold px-3 py-1.5 rounded-md">Youth Voice</span>
-           <span className="bg-[#3366cc] text-white text-[12px] font-bold px-3 py-1.5 rounded-md">Awareness</span>
-           <span className="bg-white/10 text-white/80 text-[12px] font-bold px-3 py-1.5 rounded-md">+2</span>
+           </Link>
+           {post.tags && post.tags.map((tag: string, index: number) => (
+             <span key={index} className="bg-white/5 text-white/70 text-[12px] uppercase font-black tracking-wide px-4 py-2 rounded-full line-clamp-1">
+               {tag.replace(/^#/, '')}
+             </span>
+           ))}
         </div>
 
         {/* Stats Row */}
-        <div className="px-4 py-5 flex items-center justify-between border-b border-white/[0.03]">
-           <div className="flex flex-col items-center gap-0.5">
-             <span className="text-white font-bold text-[15px]">{post.viewsCount || 0}</span>
-             <span className="text-white/40 text-[12px]">Views</span>
+        <div className="px-6 py-6 flex items-center justify-between border-b border-white/5 bg-[#121212]/30">
+           <div className="flex flex-col items-center gap-1">
+             <span className="text-white font-extrabold text-[17px] tracking-tight">{post.viewsCount || 0}</span>
+             <span className="text-white/40 text-[11px] font-bold uppercase tracking-wider">Views</span>
            </div>
-           <div className="flex flex-col items-center gap-0.5">
-             <span className="text-white font-bold text-[15px]">{localReactionsCount}</span>
-             <span className="text-white/40 text-[12px]">Likes</span>
+           <div className="flex flex-col items-center gap-1">
+             <span className="text-[#ff3366] font-extrabold text-[17px] tracking-tight">{localReactionsCount}</span>
+             <span className="text-white/40 text-[11px] font-bold uppercase tracking-wider">Likes</span>
            </div>
-           <div className="flex flex-col items-center gap-0.5">
-             <span className="text-white font-bold text-[15px]">{post.commentsCount || 0}</span>
-             <span className="text-white/40 text-[12px]">Comments</span>
+           <div className="flex flex-col items-center gap-1">
+             <span className="text-[#33ccff] font-extrabold text-[17px] tracking-tight">{post.commentsCount || 0}</span>
+             <span className="text-white/40 text-[11px] font-bold uppercase tracking-wider">Comments</span>
            </div>
-           <div className="flex flex-col items-center gap-0.5">
-             <span className="text-white font-bold text-[15px]">{post.sharesCount || 0}</span>
-             <span className="text-white/40 text-[12px]">Shares</span>
-           </div>
-           <div className="flex flex-col items-center gap-0.5">
-             <span className="text-white font-bold text-[15px]">89</span>
-             <span className="text-white/40 text-[12px]">Saves</span>
+           <div className="flex flex-col items-center gap-1">
+             <span className="text-[#ccff00] font-extrabold text-[17px] tracking-tight">{post.sharesCount || 0}</span>
+             <span className="text-white/40 text-[11px] font-bold uppercase tracking-wider">Shares</span>
            </div>
         </div>
 
@@ -342,9 +359,9 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
               {copied ? <Check className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2} /> : <Share2 className="w-[18px] h-[18px]" strokeWidth={2} />}
               <span className="text-[13px] font-semibold">Share</span>
            </button>
-           <button className="flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-white/5 transition-colors text-white/60">
-              <Bookmark className="w-[18px] h-[18px]" strokeWidth={2} />
-              <span className="text-[13px] font-semibold">Save</span>
+           <button onClick={handleBookmark} className={`flex items-center justify-center gap-2 py-2 rounded-xl transition-colors ${isBookmarked ? 'hover:bg-[#ccff00]/10 text-[#ccff00]' : 'hover:bg-white/5 text-white/60'}`}>
+              <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'text-[#ccff00] fill-[#ccff00]' : ''}`} strokeWidth={2} />
+              <span className="text-[13px] font-semibold">{isBookmarked ? "Saved" : "Save"}</span>
            </button>
         </div>
 

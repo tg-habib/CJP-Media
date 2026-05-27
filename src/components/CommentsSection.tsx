@@ -112,23 +112,23 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
 
       {/* Input box */}
       <div className="pt-2 pb-4 flex items-center gap-3">
-        <Avatar className="w-9 h-9 rounded-full shrink-0 object-cover mt-px ring-1 ring-white/10">
+        <Avatar className="w-10 h-10 rounded-full shrink-0 object-cover mt-px ring-2 ring-white/5">
            <AvatarImage src={user?.photoURL || undefined} className="object-cover" />
-           <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
+           <AvatarFallback className="bg-[#1a1a1a] text-[#ccff00] font-bold">{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
-        <div className="flex-1 bg-white/[0.03] rounded-full px-4 border border-white/[0.08] flex items-center h-[42px] transition-colors focus-within:border-white/20 focus-within:bg-white/[0.05]">
+        <div className="flex-1 bg-[#1a1a1a]/50 rounded-full px-4 border border-white/5 flex items-center h-12 transition-colors focus-within:border-[#ccff00]/30 focus-within:bg-[#1a1a1a]">
            <input 
              id="comment-input"
              type="text" 
              value={newComment}
              onChange={e => setNewComment(e.target.value)}
              onKeyDown={e => e.key === 'Enter' && handlePostComment()}
-             placeholder="Write a comment..." 
-             className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/40 w-full" 
+             placeholder="Add a comment..." 
+             className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/30 w-full font-medium" 
            />
-           <div className="flex items-center gap-3 text-white/50 pl-2 shrink-0">
-             <Smile className="w-[18px] h-[18px] hover:text-white cursor-pointer transition-colors" />
-             <ImageIcon className="w-[18px] h-[18px] hover:text-white cursor-pointer transition-colors" />
+           <div className="flex items-center gap-3 text-white/40 pl-2 shrink-0">
+             <Smile className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
+             <ImageIcon className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
            </div>
         </div>
       </div>

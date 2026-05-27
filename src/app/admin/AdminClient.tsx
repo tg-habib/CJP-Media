@@ -59,6 +59,7 @@ export default function Admin() {
   const [profileCoverUrl, setProfileCoverUrl] = useState('');
   const [profileHeroUrl, setProfileHeroUrl] = useState('');
   const [profileMobileHeroUrl, setProfileMobileHeroUrl] = useState('');
+  const [profileFooterUrl, setProfileFooterUrl] = useState('');
   const [profileHeroPosition, setProfileHeroPosition] = useState('center');
   const [profileMobileHeroPosition, setProfileMobileHeroPosition] = useState('center');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
@@ -66,6 +67,7 @@ export default function Admin() {
   const [isUploadingCover, setIsUploadingCover] = useState(false);
   const [isUploadingHero, setIsUploadingHero] = useState(false);
   const [isUploadingMobileHero, setIsUploadingMobileHero] = useState(false);
+  const [isUploadingFooter, setIsUploadingFooter] = useState(false);
 
   const [posts, setPosts] = useState<any[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -141,6 +143,7 @@ export default function Admin() {
         setProfileCoverUrl(profile.coverUrl || '');
         setProfileHeroUrl(profile.heroUrl || '');
         setProfileMobileHeroUrl(profile.mobileHeroUrl || '');
+        setProfileFooterUrl(profile.footerUrl || '');
         setProfileHeroPosition(profile.heroPosition || 'center');
         setProfileMobileHeroPosition(profile.mobileHeroPosition || 'center');
       }
@@ -263,6 +266,7 @@ export default function Admin() {
         coverUrl: profileCoverUrl,
         heroUrl: profileHeroUrl,
         mobileHeroUrl: profileMobileHeroUrl,
+        footerUrl: profileFooterUrl,
         heroPosition: profileHeroPosition,
         mobileHeroPosition: profileMobileHeroPosition
       });
@@ -366,6 +370,29 @@ export default function Admin() {
       toast.error(err.message);
     } finally {
       setIsUploadingMobileHero(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleFooterUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingFooter(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const res = await uploadImageAction(formData);
+      if (res.success && res.url) {
+        setProfileFooterUrl(res.url);
+        toast.success("Footer image uploaded");
+      } else {
+        toast.error(`Failed to upload footer: ${res.error || "Unknown error"}`);
+      }
+    } catch (err: any) {
+      toast.error(err.message);
+    } finally {
+      setIsUploadingFooter(false);
       e.target.value = '';
     }
   };
@@ -979,6 +1006,28 @@ export default function Admin() {
                     {profileMobileHeroUrl && (
                       <div className="mt-2 w-full h-48 sm:w-1/2 rounded-lg border border-white/20 overflow-hidden relative">
                         <Image src={profileMobileHeroUrl} alt="Mobile Hero" style={{ objectPosition: profileMobileHeroPosition }} fill className="object-cover" unoptimized />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-6 border-t border-white/5">
+                  <div className="space-y-3">
+                    <Label htmlFor="profileFooter" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
+                      <span>Footer Mascot Image URL</span>
+                    </Label>
+                    <div className="flex gap-2">
+                       <Input id="profileFooter" value={profileFooterUrl} onChange={e => setProfileFooterUrl(e.target.value)} placeholder="Leave blank to disable" className="bg-white/5 border-white/10 h-12 flex-1" />
+                       <div className="relative shrink-0">
+                          <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingFooter}>
+                             {isUploadingFooter ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
+                          </Button>
+                          <input type="file" accept="image/*" onChange={handleFooterUpload} disabled={isUploadingFooter} className="absolute inset-0 opacity-0 cursor-pointer" />
+                       </div>
+                    </div>
+                    {profileFooterUrl && (
+                      <div className="mt-2 w-full h-48 sm:w-1/2 rounded-lg border border-white/20 overflow-hidden relative">
+                        <Image src={profileFooterUrl} alt="Footer Mascot" fill className="object-cover" unoptimized />
                       </div>
                     )}
                   </div>

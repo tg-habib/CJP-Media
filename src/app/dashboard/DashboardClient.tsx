@@ -149,8 +149,34 @@ export default function DashboardClient() {
                 <CardTitle>Account Settings</CardTitle>
                 <CardDescription>Manage your preferences.</CardDescription>
               </CardHeader>
-              <CardContent className="min-h-[200px] flex items-center justify-center text-white/40 border-t border-white/5 pt-8 mt-4">
-                Settings panel is under construction.
+              <CardContent className="space-y-6 pt-4 border-t border-white/5 mt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-white text-sm">Email Notifications</p>
+                    <p className="text-white/50 text-xs">Receive updates and notifications via email</p>
+                  </div>
+                  <div className="w-11 h-6 bg-[#ccff00] rounded-full relative cursor-pointer opacity-50">
+                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-white text-sm">Direct Messages</p>
+                    <p className="text-white/50 text-xs">Allow users to send you direct messages</p>
+                  </div>
+                  <div className="w-11 h-6 bg-[#ccff00] rounded-full relative cursor-pointer">
+                    <div className="w-5 h-5 bg-black rounded-full absolute right-0.5 top-0.5"></div>
+                  </div>
+                </div>
+                 <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-white text-sm">Private Account</p>
+                    <p className="text-white/50 text-xs">Only approved followers can see your posts</p>
+                  </div>
+                  <div className="w-11 h-6 bg-white/10 rounded-full relative cursor-pointer">
+                    <div className="w-5 h-5 bg-white/50 rounded-full absolute left-0.5 top-0.5"></div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}

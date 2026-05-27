@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, startAfter, getDocs, doc, onSnapshot, updateDoc, increment, setDoc, deleteDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { MoreVertical, MessageCircle, Share2, Bookmark, Flame, Eye, ChevronDown, Smile, Image as ImageIcon, Globe, Loader2, Link2, Copy, Check, ArrowUp } from 'lucide-react';
+import { MoreVertical, MessageCircle, Share2, Bookmark, Flame, Eye, ChevronDown, ChevronRight, Smile, Image as ImageIcon, Globe, Loader2, Link2, Copy, Check, ArrowUp } from 'lucide-react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
 import Image from 'next/image';
@@ -12,10 +12,11 @@ import { auth, loginWithGoogle } from '../../firebase';
 import { formatDistanceToNow } from 'date-fns';
 import { useFollow } from '../../hooks/useFollow';
 import { toast } from 'sonner';
+import VerifiedBadge from '../../components/VerifiedBadge';
 
 const CATEGORIES = ["Latest", "Trending", "News", "Politics", "Youth Voice"];
 
-function FeedPostItem({ post, VerifiedBadge, user, pName, pAvatarUrl }: { post: any, VerifiedBadge: any, user: any, pName: string, pAvatarUrl?: string }) {
+function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any, pName: string, pAvatarUrl?: string }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
   const [localReactionsCount, setLocalReactionsCount] = useState(post.reactionsCount || 0);
@@ -26,7 +27,7 @@ function FeedPostItem({ post, VerifiedBadge, user, pName, pAvatarUrl }: { post: 
   let timeAgo = "2h ago";
   if (post.createdAt) {
      try {
-        const date = typeof post.createdAt.toDate === 'function' ? post.createdAt.toDate() : post.createdAt;
+        const date = typeof post.createdAt.toDate === 'function' ? post.createdAt.toDate() : new Date(post.createdAt);
         timeAgo = formatDistanceToNow(date, { addSuffix: true }).replace("about ", "");
      } catch (e) {}
   }
@@ -55,6 +56,17 @@ function FeedPostItem({ post, VerifiedBadge, user, pName, pAvatarUrl }: { post: 
     if (index !== currentImageIndex) {
       setCurrentImageIndex(index);
     }
+  };
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const handleBookmark = () => {
+    if (!user) {
+      toast.error("Please login to bookmark posts");
+      return;
+    }
+    setIsBookmarked(!isBookmarked);
+    toast.success(isBookmarked ? "Removed from bookmarks" : "Saved to bookmarks");
   };
 
   const handleLike = async () => {
@@ -137,32 +149,32 @@ function FeedPostItem({ post, VerifiedBadge, user, pName, pAvatarUrl }: { post: 
   };
 
   return (
-    <div className="w-full bg-[#121212] rounded-2xl border border-white/5 overflow-hidden flex flex-col">
+    <div className="w-full bg-[#121212]/80 rounded-[28px] border border-white/5 overflow-hidden flex flex-col mb-2 hover:border-white/10 transition-colors">
       
       {/* Header */}
-      <div className="p-3 flex items-start justify-between">
+      <div className="p-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/profile" className="w-[36px] h-[36px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/20 hover:scale-105 transition-transform flex items-center justify-center bg-[#4d6600]">
+          <Link href="/profile" className="w-[42px] h-[42px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/50 hover:border-[#ccff00]/80 transition-colors flex items-center justify-center bg-gradient-to-br from-[#ccff00]/20 to-transparent shadow-[0_0_12px_rgba(204,255,0,0.2)] ring-1 ring-[#ccff00]/20 ring-offset-1 ring-offset-[#0c0c0c]">
              {pAvatarUrl ? (
                <Image src={pAvatarUrl} alt={pName} fill className="object-cover" />
              ) : (
-               <Flame className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2.5} />
+               <Flame className="w-[20px] h-[20px] text-[#ccff00]" strokeWidth={2.5} />
              )}
           </Link>
           <div className="flex flex-col">
              <Link href="/profile" className="flex items-center hover:text-[#ccff00] transition">
-                <span className="font-bold text-[15px] leading-none">{pName}</span>
-                <VerifiedBadge />
+                <span className="font-bold text-[16px] leading-none text-white tracking-tight">{pName}</span>
+                <VerifiedBadge className="w-5 h-5 ml-1 drop-shadow-[0_0_4px_rgba(204,255,0,0.5)]" />
              </Link>
-             <div className="text-[12px] text-white/50 flex items-center gap-1 mt-1">
+             <div className="text-[13px] text-white/40 flex items-center gap-1.5 mt-1 font-medium">
                 <span>{timeAgo}</span>
                 <span className="text-[10px]">•</span>
-                <Globe className="w-3 h-3" />
+                <Globe className="w-3.5 h-3.5" />
                 <span>Public</span>
              </div>
           </div>
         </div>
-        <button className="text-white/50 hover:text-white p-1 rounded-full hover:bg-white/10 transition -mr-1">
+        <button className="text-white/40 hover:text-white p-1.5 rounded-full hover:bg-white/5 transition-colors -mr-1.5">
           <MoreVertical className="w-5 h-5" />
         </button>
       </div>
@@ -256,53 +268,55 @@ function FeedPostItem({ post, VerifiedBadge, user, pName, pAvatarUrl }: { post: 
              <span className="text-[13px]">{post.sharesCount || 0}</span>
            </button>
         </div>
-        <button className="hover:text-white transition">
-          <Bookmark className="w-[18px] h-[18px] text-white/50" />
+        <button onClick={handleBookmark} className={`transition ${isBookmarked ? 'text-[#ccff00]' : 'hover:text-white'}`}>
+          <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'fill-[#ccff00] text-[#ccff00]' : 'text-white/50'}`} />
         </button>
       </div>
       
       {/* Tags */}
-      <div className="px-4 pb-2 pt-1 flex items-center gap-2 flex-wrap">
-         <Link href={`/category/${post.category || 'Politics'}`} className="bg-[#cc6633] text-black text-[11px] font-bold px-2.5 py-1 rounded-md line-clamp-1 hover:brightness-110">
+      <div className="px-5 pb-2 pt-1 flex items-center gap-2 flex-wrap">
+         <Link href={`/category/${post.category || 'Politics'}`} className="bg-[#ccff00]/10 text-[#ccff00] text-[11px] uppercase font-black tracking-wide px-3 py-1.5 rounded-full line-clamp-1 hover:bg-[#ccff00]/20 transition-colors">
             {post.category || "Politics"}
          </Link>
-         <span className="bg-[#33cc33] text-black text-[11px] font-bold px-2.5 py-1 rounded-md line-clamp-1">Youth Voice</span>
-         <span className="bg-[#3366cc] text-white text-[11px] font-bold px-2.5 py-1 rounded-md line-clamp-1">Awareness</span>
-         <span className="bg-white/10 text-white/80 text-[11px] font-bold px-2.5 py-1 rounded-md">+2</span>
+         {post.tags && post.tags.map((tag: string, index: number) => (
+           <span key={index} className="bg-white/5 text-white/70 text-[11px] uppercase font-black tracking-wide px-3 py-1.5 rounded-full line-clamp-1">
+             {tag.replace(/^#/, '')}
+           </span>
+         ))}
       </div>
       
       {/* Captions & Read more */}
-      <div className="px-4 pb-3">
-        <h3 className="font-bold text-white text-[15px] leading-snug mb-1">
+      <div className="px-5 pb-3">
+        <h3 className="font-bold text-white text-[16px] leading-snug mb-1">
           <Link href={`/post/${post.id}`} className="hover:underline">{post.title}</Link>
         </h3>
-        <p className="text-white/60 italic text-[14px] leading-snug font-serif">
+        <p className="text-white/60 italic text-[14px] leading-relaxed font-serif">
           "{post.roast || "Cockroach Janta Party Official Logo CJP a Voice of unemployed youth"}"
         </p>
-        <Link href={`/post/${post.id}`} className="text-[#ccff00] text-[13px] font-medium flex items-center gap-1 mt-1 hover:underline w-max">
-          Read more
-          <ChevronDown className="w-3.5 h-3.5" />
+        <Link href={`/post/${post.id}`} className="text-[#ccff00] text-[13px] font-bold flex items-center gap-1.5 mt-2 hover:underline w-max">
+          Expand Post
+          <ChevronRight className="w-3.5 h-3.5" />
         </Link>
       </div>
       
       {/* Comment Input Box */}
-      <div className="px-4 pb-4 pt-1 flex items-center gap-3">
-        <Avatar className="w-8 h-8 rounded-full ring-1 ring-white/10 shrink-0 object-cover">
+      <div className="px-5 pb-5 pt-2 flex items-center gap-3">
+        <Avatar className="w-9 h-9 rounded-full ring-2 ring-white/5 shrink-0 object-cover">
            <AvatarImage src={user?.photoURL || undefined} className="object-cover" />
-           <AvatarFallback>{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
+           <AvatarFallback className="bg-[#1a1a1a] text-[#ccff00] font-bold">{user?.displayName?.charAt(0) || 'U'}</AvatarFallback>
         </Avatar>
-        <div className="flex-1 bg-white/[0.03] rounded-full px-4 border border-white/[0.08] flex items-center h-10 transition-colors focus-within:border-white/20 focus-within:bg-white/[0.05]">
+        <div className="flex-1 bg-[#1a1a1a]/50 rounded-full px-4 border border-white/5 flex items-center h-11 transition-colors focus-within:border-[#ccff00]/30 focus-within:bg-[#1a1a1a]">
            <input 
              type="text" 
              value={newComment}
              onChange={e => setNewComment(e.target.value)}
              onKeyDown={e => e.key === 'Enter' && handleComment()}
-             placeholder="Write a comment..." 
-             className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/40 w-full" 
+             placeholder="Add a comment..." 
+             className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/30 w-full font-medium" 
            />
            <div className="flex items-center gap-3 text-white/40 pl-2 shrink-0">
-             <Smile className="w-[18px] h-[18px] hover:text-white cursor-pointer transition-colors" />
-             <ImageIcon className="w-[18px] h-[18px] hover:text-white cursor-pointer transition-colors" />
+             <Smile className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
+             <ImageIcon className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
            </div>
         </div>
       </div>
@@ -389,13 +403,6 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
 
   const filteredPosts = filter === "Latest" ? posts : posts.filter(p => p.category === filter);
 
-  const VerifiedBadge = () => (
-    <svg className="w-[15px] h-[15px] text-[#1d9bf0] ml-1" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.918-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.337 2.25c-.416-.165-.866-.25-1.336-.25-2.21 0-3.918 1.79-3.918 4 0 .495.084.965.238 1.4-1.273.65-2.148 2.02-2.148 3.6 0 1.46.74 2.748 1.838 3.447-.075.313-.118.636-.118.97 0 2.21 1.71 4 3.918 4 .51 0 1-.097 1.454-.275C9.176 21.6 10.495 22.5 12 22.5c1.505 0 2.824-.9 3.348-2.275.456.178.945.275 1.454.275 2.21 0 3.918-1.79 3.918-4 0-.334-.043-.656-.118-.97 1.098-.7 1.838-1.987 1.838-3.447z" />
-      <path fill="#fff" d="M10.458 15.65c-.24 0-.48-.09-.66-.27l-2.45-2.45c-.36-.36-.36-.95 0-1.32.36-.36.95-.36 1.32 0l1.79 1.79 4.14-4.14c.36-.36.95-.36 1.32 0 .36.36.36.95 0 1.32l-4.8 4.8c-.18.18-.42.27-.66.27z" />
-    </svg>
-  );
-
   return (
     <div className="flex justify-center min-h-screen bg-[#0a0a0a]">
       <div className="w-full max-w-[1240px] flex justify-center lg:justify-between gap-0 lg:gap-8 px-0 lg:px-4">
@@ -450,7 +457,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
         {/* Feed container */}
         <div className="flex flex-col gap-3 px-2">
           {filteredPosts.map((post, i) => (
-             <FeedPostItem key={`${post.id}-${i}`} post={post} VerifiedBadge={VerifiedBadge} user={user} pName={pName} pAvatarUrl={pAvatarUrl} />
+             <FeedPostItem key={`${post.id}-${i}`} post={post} user={user} pName={pName} pAvatarUrl={pAvatarUrl} />
           ))}
         </div>
 
@@ -529,7 +536,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Link href="/profile" className="w-10 h-10 rounded-full bg-[#4d6600] border border-[#ccff00]/20 flex items-center justify-center shrink-0 overflow-hidden relative">
+                  <Link href="/profile" className="w-10 h-10 rounded-full border border-[#ccff00]/50 flex items-center justify-center shrink-0 overflow-hidden relative shadow-[0_0_8px_rgba(204,255,0,0.2)] bg-gradient-to-br from-[#ccff00]/20 to-transparent">
                     {pAvatarUrl ? (
                       <Image src={pAvatarUrl} alt={pName} fill className="object-cover" />
                     ) : (
@@ -538,7 +545,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
                   </Link>
                   <div className="flex flex-col text-sm">
                     <Link href="/profile" className="font-bold text-white leading-tight hover:underline flex items-center gap-1">
-                      {pName} <VerifiedBadge />
+                      {pName} <VerifiedBadge className="w-4 h-4" />
                     </Link>
                     <span className="text-white/50">@cjpmedia</span>
                   </div>

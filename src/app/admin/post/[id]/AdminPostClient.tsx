@@ -162,7 +162,7 @@ export default function AdminPostClient({ initialPost }: { initialPost: any }) {
   if (!isAdmin) return null;
 
   // Mock deeply detailed analytics for the dashboard effect
-  const viewCount = post.views || Math.floor(Math.random() * 5000) + 120;
+  const viewCount = post.viewsCount || Math.floor(Math.random() * 5000) + 120;
   const uniqueVisitors = Math.floor(viewCount * 0.7);
   const avgTimeOnPage = "2m 14s";
   const bounceRate = "34%";

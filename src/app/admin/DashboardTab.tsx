@@ -233,8 +233,8 @@ export default function DashboardTab({ posts, setActiveTab, setIsMobileMenuOpen 
                  {p.createdAt ? new Date(p.createdAt).toLocaleDateString() : (p.date || 'Unknown')}
                </p>
                <div className="flex items-center gap-3 text-[11px] text-white/60 font-medium">
-                 <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {p.views || 0}</span>
-                 <span className="flex items-center gap-1"><Heart className="w-3 h-3" /> {p.likes || 0}</span>
+                 <span className="flex items-center gap-1"><Eye className="w-3 h-3" /> {p.viewsCount || 0}</span>
+                 <span className="flex items-center gap-1"><Heart className="w-3 h-3" /> {p.reactionsCount || 0}</span>
                  <span className="flex items-center gap-1"><MessageSquare className="w-3 h-3" /> {p.commentsCount || 0}</span>
                </div>
             </div>
