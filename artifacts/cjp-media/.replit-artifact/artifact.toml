@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "CJP Media"
+version = "1.0.0"
+id = "artifacts/cjp-media"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24864
+
+[services.development]
+run = "pnpm --filter @workspace/cjp-media run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/cjp-media", "run", "build" ]
+publicDir = "artifacts/cjp-media/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24864"
+BASE_PATH = "/"
