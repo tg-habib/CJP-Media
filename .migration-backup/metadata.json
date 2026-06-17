@@ -1,6 +1,0 @@
-{
-  "name": "CJP Media",
-  "description": "Art That Survives. Official media platform of the Cockroach Janta Party.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
