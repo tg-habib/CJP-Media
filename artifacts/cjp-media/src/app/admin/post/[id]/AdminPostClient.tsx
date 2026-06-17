@@ -1,14 +1,14 @@
 'use client';
 
 import { useState, useEffect, ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useLocation } from 'wouter';
 import { auth, db } from '@/firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { doc, updateDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
-import Image from 'next/image';
-import Link from 'next/link';
+
+import { Link } from 'wouter';
 
 import { uploadImageAction } from '../../actions';
 
@@ -46,7 +46,7 @@ const CATEGORIES = ["Trending", "Latest", "Economy Roasts", "Politics", "Memes",
 
 export default function AdminPostClient({ initialPost }: { initialPost: any }) {
   const [user, loading] = useAuthState(auth);
-  const router = useRouter();
+  const [, navigate] = useLocation();
   const isAdmin = user?.email === 'tgff28970@gmail.com';
 
   const [post, setPost] = useState(initialPost);
@@ -70,9 +70,9 @@ export default function AdminPostClient({ initialPost }: { initialPost: any }) {
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) {
-      router.push('/');
+      navigate('/');
     }
-  }, [user, loading, isAdmin, router]);
+  }, [user, loading, isAdmin, navigate]);
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -151,7 +151,7 @@ export default function AdminPostClient({ initialPost }: { initialPost: any }) {
     try {
       await deleteDoc(doc(db, 'posts', post.id));
       toast.success('Post deleted permanently.');
-      router.push('/admin');
+      navigate('/admin');
     } catch (error) {
       console.error('Error deleting post:', error);
       toast.error('Failed to delete post.');
@@ -312,7 +312,7 @@ export default function AdminPostClient({ initialPost }: { initialPost: any }) {
                   <CardContent>
                      {imageUrls.length > 0 ? (
                        <div className="w-full aspect-[4/3] relative rounded-xl overflow-hidden border border-white/10">
-                         <Image src={imageUrls[0]} alt="Hero" fill className="object-cover" />
+                         <img src={imageUrls[0]} alt="Hero" className="object-cover w-full h-full" />
                        </div>
                      ) : (
                        <div className="w-full aspect-[4/3] bg-white/5 rounded-xl border border-white/10 border-dashed flex items-center justify-center text-muted-foreground flex-col gap-2">
@@ -411,7 +411,7 @@ export default function AdminPostClient({ initialPost }: { initialPost: any }) {
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                               {imageUrls.map((url: string, index: number) => (
                                 <div key={index} className="relative group/preview aspect-square bg-black/50 rounded-xl overflow-hidden border border-white/10">
-                                  <Image src={url} alt={`Preview ${index}`} fill className="object-cover" />
+                                  <img src={url} alt={`Preview ${index}`} className="object-cover w-full h-full absolute inset-0" />
                                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                                     <Button type="button" variant="destructive" size="icon" className="h-8 w-8 rounded-full shadow-lg" onClick={() => handleRemoveImage(index)}>
                                       <Trash2 className="w-4 h-4" />

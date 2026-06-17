@@ -2,20 +2,20 @@
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../../firebase';
-import { useRouter } from 'next/navigation';
+import { useLocation } from 'wouter';
 import { useEffect } from 'react';
 import { ArrowLeft, MessageSquare, Search } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'wouter';
 
 export default function MessagesClient() {
   const [user, loading] = useAuthState(auth);
-  const router = useRouter();
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      navigate('/');
     }
-  }, [user, loading, router]);
+  }, [user, loading, navigate]);
 
   if (loading || !user) return null;
 

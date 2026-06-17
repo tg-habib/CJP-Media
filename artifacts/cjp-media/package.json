@@ -80,8 +80,6 @@
     "firebase": "^12.15.0",
     "firebase-admin": "^14.0.0",
     "motion": "^12.40.0",
-    "next": "^16.2.9",
-    "nextjs-toploader": "^3.9.17",
     "react-firebase-hooks": "^5.1.1"
   }
 }

@@ -2,23 +2,23 @@
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../firebase';
-import { useRouter } from 'next/navigation';
+import { useLocation } from 'wouter';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { RefreshCw, User, Settings, Bookmark, Heart, LogOut } from 'lucide-react';
-import Image from 'next/image';
+
 
 export default function DashboardClient() {
   const [user, loading] = useAuthState(auth);
-  const router = useRouter();
+  const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState('profile');
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      navigate('/');
     }
-  }, [user, loading, router]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
@@ -40,7 +40,7 @@ export default function DashboardClient() {
             <div className="flex items-center gap-3 mb-6 p-2">
               <div className="w-12 h-12 rounded-full overflow-hidden bg-white/10 border border-white/20">
                 {user.photoURL ? (
-                  <Image src={user.photoURL} alt="Profile" width={48} height={48} className="object-cover" />
+                  <img src={user.photoURL} alt="Profile" className="object-cover w-12 h-12 rounded-full" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-xl font-bold bg-primary/20 text-primary">
                     {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}

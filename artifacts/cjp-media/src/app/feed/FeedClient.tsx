@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, startAfter, getDocs, doc, onSnapshot, updateDoc, increment, setDoc, deleteDoc, serverTimestamp, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { MoreVertical, MessageCircle, Share2, Bookmark, Flame, Eye, ChevronDown, ChevronRight, Smile, Image as ImageIcon, Globe, Loader2, Link2, Copy, Check, ArrowUp } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from 'wouter';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar';
-import Image from 'next/image';
+
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, loginWithGoogle } from '../../firebase';
 import { formatDistanceToNow } from 'date-fns';
@@ -156,7 +156,7 @@ function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any,
         <div className="flex items-center gap-3">
           <Link href="/profile" className="w-[42px] h-[42px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/50 hover:border-[#ccff00]/80 transition-colors flex items-center justify-center bg-gradient-to-br from-[#ccff00]/20 to-transparent shadow-[0_0_12px_rgba(204,255,0,0.2)] ring-1 ring-[#ccff00]/20 ring-offset-1 ring-offset-[#0c0c0c]">
              {pAvatarUrl ? (
-               <Image src={pAvatarUrl} alt={pName} fill className="object-cover" />
+               <img src={pAvatarUrl} alt={pName} className="object-cover w-full h-full absolute inset-0" />
              ) : (
                <Flame className="w-[20px] h-[20px] text-[#ccff00]" strokeWidth={2.5} />
              )}
@@ -187,26 +187,13 @@ function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any,
          >
             {images.map((img: string, i: number) => (
                <Link href={`/post/${post.id}`} key={i} className="w-full h-full shrink-0 snap-center relative block">
-                 <Image 
-                   src={img || 'https://picsum.photos/seed/placeholder/800/800'} 
-                   alt={post.title || "Post"} 
-                   fill 
-                   unoptimized
-                   priority={i === 0}
-                   className="object-contain"
-                 />
+                 <img src={img || 'https://picsum.photos/seed/placeholder/800/800'} alt={post.title || "Post"} className="object-contain w-full h-full" />
                </Link>
             ))}
             {/* If no images at all, show a placeholder linked */}
             {images.length === 0 && (
                <Link href={`/post/${post.id}`} className="w-full h-full shrink-0 snap-center relative block">
-                 <Image 
-                   src={'https://picsum.photos/seed/placeholder/800/800'} 
-                   alt={post.title || "Post"} 
-                   fill 
-                   unoptimized
-                   className="object-contain"
-                 />
+                 <img src={'https://picsum.photos/seed/placeholder/800/800'} alt={post.title || "Post"} className="object-contain w-full h-full" />
                </Link>
             )}
          </div>
@@ -538,7 +525,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
                 <div className="flex items-center gap-3">
                   <Link href="/profile" className="w-10 h-10 rounded-full border border-[#ccff00]/50 flex items-center justify-center shrink-0 overflow-hidden relative shadow-[0_0_8px_rgba(204,255,0,0.2)] bg-gradient-to-br from-[#ccff00]/20 to-transparent">
                     {pAvatarUrl ? (
-                      <Image src={pAvatarUrl} alt={pName} fill className="object-cover" />
+                      <img src={pAvatarUrl} alt={pName} className="object-cover w-full h-full absolute inset-0" />
                     ) : (
                       <Flame className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2.5} />
                     )}

@@ -56,7 +56,7 @@ export async function uploadImageAction(formData: FormData): Promise<{ success: 
       if (data.secure_url) return { success: true, url: data.secure_url };
       throw new Error(data.error?.message || 'Cloudinary upload failed');
     } else {
-      const apiKey = settings?.imgbbApiKey || (import.meta as any).env?.VITE_IMGBB_API_KEY || 'c87f9b7cd6c2f15c523c9036f0c61953';
+      const apiKey = settings?.imgbbApiKey || (import.meta as any).env?.VITE_IMGBB_API_KEY;
       const imgForm = new FormData();
       imgForm.append('image', file);
       const res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, { method: 'POST', body: imgForm });

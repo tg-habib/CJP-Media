@@ -10,6 +10,7 @@ import DashboardPage from "./pages/DashboardPage";
 import MessagesPage from "./pages/MessagesPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import AdminPostPage from "./pages/AdminPostPage";
 
 function Router() {
   return (
@@ -19,6 +20,7 @@ function Router() {
       <Route path="/post/:id" component={PostPage} />
       <Route path="/category/:slug" component={CategoryPage} />
       <Route path="/admin" component={AdminPage} />
+      <Route path="/admin/post/:id" component={AdminPostPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/messages" component={MessagesPage} />
