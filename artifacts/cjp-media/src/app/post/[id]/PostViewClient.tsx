@@ -272,7 +272,7 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
           <div className="flex items-center gap-4">
              <Link href="/profile" className="w-[48px] h-[48px] shrink-0 relative overflow-hidden rounded-full border border-[#ccff00]/50 flex items-center justify-center bg-gradient-to-br from-[#ccff00]/20 to-transparent hover:border-[#ccff00]/80 transition-colors shadow-[0_0_12px_rgba(204,255,0,0.3)] ring-2 ring-[#ccff00]/20 ring-offset-2 ring-offset-[#0a0a0a]">
                {pAvatarUrl ? (
-                 <img src={pAvatarUrl} alt={pName} className="object-cover" />
+                 <img src={pAvatarUrl} alt={pName} className="w-full h-full object-cover" />
                ) : (
                  <Flame className="w-[24px] h-[24px] text-[#ccff00]" strokeWidth={2.5} />
                )}
@@ -418,12 +418,16 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
         <div className="mx-4 my-6 p-4 rounded-2xl border border-white/[0.08] bg-[#121212] flex flex-col gap-4">
            <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                 <Link href="/profile" className="bg-[#4d6600] w-12 h-12 rounded-full shrink-0 flex items-center justify-center border border-[#ccff00]/20 hover:scale-105 transition-transform">
-                   <Flame className="w-6 h-6 text-[#ccff00]" strokeWidth={2.5} />
+                 <Link href="/profile" className="w-12 h-12 rounded-full shrink-0 overflow-hidden flex items-center justify-center border border-[#ccff00]/20 hover:scale-105 transition-transform bg-[#4d6600]">
+                   {pAvatarUrl ? (
+                     <img src={pAvatarUrl} alt={pName} className="w-full h-full object-cover" />
+                   ) : (
+                     <Flame className="w-6 h-6 text-[#ccff00]" strokeWidth={2.5} />
+                   )}
                  </Link>
                  <div className="flex flex-col">
                     <Link href="/profile" className="flex items-center gap-1 hover:text-[#ccff00] transition">
-                       <span className="font-bold text-white text-[16px]">CJP Media</span>
+                       <span className="font-bold text-white text-[16px]">{pName}</span>
                        <VerifiedBadge />
                     </Link>
                     <span className="text-white/50 text-[13px]">127K Followers</span>
@@ -476,8 +480,12 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center shrink-0">
-                    <span className="text-white font-bold">R</span>
+                  <div className="w-10 h-10 rounded-full bg-[#1a1a1a] border border-white/10 flex items-center justify-center shrink-0 overflow-hidden">
+                    {pAvatarUrl ? (
+                      <img src={pAvatarUrl} alt={pName} className="w-full h-full object-cover" />
+                    ) : (
+                      <Flame className="w-5 h-5 text-[#ccff00]" strokeWidth={2.5} />
+                    )}
                   </div>
                   <div className="flex flex-col text-sm">
                     <span className="font-bold text-white leading-tight hover:underline flex items-center gap-1">

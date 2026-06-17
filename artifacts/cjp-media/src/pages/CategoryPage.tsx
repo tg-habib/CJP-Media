@@ -10,7 +10,7 @@ import BottomNav from "../components/BottomNav";
 import { formatDistanceToNow } from "date-fns";
 
 const CATEGORY_META: Record<string, {
-  Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  Icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }>;
   description: string;
   color: string;
 }> = {

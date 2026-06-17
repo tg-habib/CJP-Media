@@ -1,5 +1,6 @@
 import { useParams } from 'wouter';
 import UserProfileClient from '../app/user/[uid]/UserProfileClient';
+import BottomNav from '../components/BottomNav';
 
 export default function UserProfilePage() {
   const params = useParams<{ uid: string }>();
@@ -13,5 +14,10 @@ export default function UserProfilePage() {
     );
   }
 
-  return <UserProfileClient uid={uid} />;
+  return (
+    <>
+      <UserProfileClient uid={uid} />
+      <BottomNav />
+    </>
+  );
 }

@@ -18,7 +18,17 @@ export default function Header({ settings }: { settings?: any }) {
   useEffect(() => { setMounted(true); }, []);
 
   if (!mounted) return null;
-  if (pathname?.startsWith('/post/') || pathname?.startsWith('/feed') || pathname?.startsWith('/admin') || pathname?.startsWith('/profile')) return null;
+  if (
+    pathname?.startsWith('/post/') ||
+    pathname?.startsWith('/feed') ||
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/profile') ||
+    pathname?.startsWith('/dashboard') ||
+    pathname?.startsWith('/notifications') ||
+    pathname?.startsWith('/messages') ||
+    pathname?.startsWith('/user/') ||
+    pathname?.startsWith('/category/')
+  ) return null;
 
   return (
     <>

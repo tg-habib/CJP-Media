@@ -52,7 +52,7 @@ export default function ProfileClient({ initialPosts, profile }: { initialPosts:
       <div className="w-full max-w-xl mx-auto pb-20">
          {/* Banner */}
          <div className="w-full h-[180px] sm:h-[220px] relative bg-[#1a1a1a] overflow-hidden">
-           <img src={pCoverUrl} alt="Banner" className={`object-cover ${localProfile?.coverUrl ? 'opacity-80' : 'opacity-30 mix-blend-overlay'}`} />
+           <img src={pCoverUrl} alt="Banner" className={`absolute inset-0 w-full h-full object-cover ${localProfile?.coverUrl ? 'opacity-80' : 'opacity-30 mix-blend-overlay'}`} />
            {!localProfile?.coverUrl && (
              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
                 <h2 className="text-white font-bold text-[22px] tracking-tight uppercase">Voice of the</h2>
@@ -238,7 +238,7 @@ export default function ProfileClient({ initialPosts, profile }: { initialPosts:
                  <div className="grid grid-cols-3 gap-1.5">
                     {initialPosts.map((post, i) => (
                       <Link href={`/post/${post.id}`} key={post.id + i} className="relative aspect-[3/4] bg-[#1a1a1a] rounded-lg overflow-hidden group border border-white/5">
-                         <img src={post.imageUrls?.[0] || post.imageUrl || post.image || post.coverImage || `https://picsum.photos/seed/${post.id}/300/400`} alt={post.title || 'Post view'} className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                         <img src={post.imageUrls?.[0] || post.imageUrl || post.image || post.coverImage || `https://picsum.photos/seed/${post.id}/300/400`} alt={post.title || 'Post view'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                          
                          {/* Badges/Tags */}
                          {(i === 0 || post.category === 'Pinned') && (
