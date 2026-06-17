@@ -3,7 +3,7 @@ import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 import { db, auth, loginWithGoogle, toggleBookmark } from '../../../firebase';
-import { ArrowLeft, MoreVertical, MessageCircle, Share2, Bookmark, Flame, Globe, Check } from 'lucide-react';
+import { ArrowLeft, MoreVertical, MessageCircle, Share2, Bookmark, Flame, Globe, Check, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 import { Link } from 'wouter';
@@ -204,28 +204,24 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
       <div className="w-full max-w-[1240px] flex justify-center lg:justify-between gap-0 lg:gap-8 px-0 lg:px-4">
         
         {/* Left Sidebar (Desktop Only) */}
-        <div className="hidden lg:flex flex-col w-[260px] sticky top-0 h-screen shrink-0 border-r border-white/5 py-4 pr-6">
-          <nav className="flex flex-col gap-2">
-             <Link href="/" className="flex items-center gap-4 py-3 px-4 rounded-full hover:bg-white/5 text-white/70 transition w-fit">
-               <Globe className="w-6 h-6" />
-               <span className="text-xl">Feed</span>
-             </Link>
-             <Link href="/" className="flex items-center gap-4 py-3 px-4 rounded-full hover:bg-white/5 text-white/70 transition w-fit">
-               <Flame className="w-6 h-6" />
-               <span className="text-xl">Trending</span>
-             </Link>
-             <Link href="/" className="flex items-center gap-4 py-3 px-4 rounded-full hover:bg-white/5 text-white/70 transition w-fit">
-               <MessageCircle className="w-6 h-6" />
-               <span className="text-xl">Discussions</span>
-             </Link>
-             <Link href="/" className="flex items-center gap-4 py-3 px-4 rounded-full hover:bg-white/5 text-white/70 transition w-fit">
-               <Bookmark className="w-6 h-6" />
-               <span className="text-xl">Saved</span>
-             </Link>
+        <div className="hidden lg:flex flex-col w-[275px] sticky top-0 h-screen shrink-0 pt-2 pr-4">
+          <Link href="/" className="flex items-center justify-center w-12 h-12 rounded-full hover:bg-white/5 transition-colors mb-2">
+            <Flame className="w-7 h-7 text-[#ccff00]" strokeWidth={2.5} />
+          </Link>
+          <nav className="flex flex-col gap-0.5 mt-2">
+            {[
+              { href: "/", icon: Globe, label: "Home" },
+              { href: "/feed", icon: Flame, label: "Feed" },
+              { href: "/category/Trending", icon: TrendingUp, label: "Trending" },
+              { href: "/messages", icon: MessageCircle, label: "Messages" },
+              { href: "/dashboard", icon: Bookmark, label: "Saved" },
+            ].map(({ href, icon: Icon, label }) => (
+              <Link key={href} href={href} className="flex items-center gap-4 py-3 px-3 rounded-full hover:bg-white/5 text-white/60 hover:text-white transition-colors w-fit">
+                <Icon className="w-[26px] h-[26px]" strokeWidth={2} />
+                <span className="text-[20px]">{label}</span>
+              </Link>
+            ))}
           </nav>
-          <button className="bg-[#ccff00] text-black font-bold text-lg rounded-full py-3.5 mt-6 hover:bg-[#bbe600] transition shadow-[0_0_15px_rgba(204,255,0,0.2)]">
-            Create Post
-          </button>
         </div>
 
         {/* Main Feed Container */}
@@ -307,14 +303,16 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
              )}
           </div>
           {/* Pagination Indicators beneath image, slightly overlaying or just below... design shows below */}
-          <div className="flex justify-center gap-1.5 py-4 bg-[#0a0a0a]">
-             {(hasMultiple ? images : Array(1).fill(0)).map((_: string, i: number) => (
-               <div 
-                 key={i} 
-                 className={`w-2 h-2 rounded-full transition-colors ${i === currentImageIndex ? 'bg-[#557711]' : 'bg-white/20'}`}
-               />
-             ))}
-          </div>
+          {hasMultiple && (
+            <div className="flex justify-center gap-1.5 py-4 bg-[#000000]">
+               {images.map((_: string, i: number) => (
+                 <div
+                   key={i}
+                   className={`h-1.5 rounded-full transition-all duration-300 ${i === currentImageIndex ? 'bg-[#ccff00] w-4' : 'bg-white/20 w-1.5'}`}
+                 />
+               ))}
+            </div>
+          )}
         </div>
 
         {/* Text Content */}

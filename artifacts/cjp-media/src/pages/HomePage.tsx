@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet-async";
-import { collection, query, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, orderBy, limit, getDocs, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { Flame, ArrowRight, TrendingUp, Newspaper, Users, Eye, Heart, ChevronRight, Megaphone } from "lucide-react";
 import Header from "../components/Header";
@@ -23,8 +23,8 @@ export default function HomePage() {
         if (profileSnap.exists()) setProfileSettings(profileSnap.data());
       } catch (_) {}
 
-      try {
-        const snap = await getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(10)));
+      const q = query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(10));
+      const unsub = onSnapshot(q, (snap) => {
         const latest = snap.docs.map(d => {
           const data = d.data();
           return {
@@ -34,13 +34,13 @@ export default function HomePage() {
         });
         setLatestPosts(latest);
         setTrendingPosts([...latest].sort((a: any, b: any) => ((b.viewsCount || 0) + (b.reactionsCount || 0)) - ((a.viewsCount || 0) + (a.reactionsCount || 0))).slice(0, 5));
-      } catch (err) {
-        console.error("Failed to fetch posts:", err);
-      } finally {
         setLoading(false);
-      }
+      }, () => setLoading(false));
+      return unsub;
     };
-    fetchData();
+    let unsubPosts: (() => void) | undefined;
+    fetchData().then(unsub => { unsubPosts = unsub; });
+    return () => { if (unsubPosts) unsubPosts(); };
   }, []);
 
   return (
