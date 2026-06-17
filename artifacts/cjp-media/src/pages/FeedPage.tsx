@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { Helmet } from "react-helmet-async";
-import { collection, query, orderBy, onSnapshot, limit } from "firebase/firestore";
-import { db } from "../firebase";
+import { collection, query, orderBy, onSnapshot, limit, doc, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore";
+import { db, auth, loginWithGoogle } from "../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import { Flame, Globe, MessageCircle, Bookmark, TrendingUp } from "lucide-react";
@@ -10,11 +11,47 @@ import { formatDistanceToNow } from "date-fns";
 import VerifiedBadge from "../components/VerifiedBadge";
 import { SkeletonFeedPost } from "../components/SkeletonPost";
 import { ErrorBoundary } from "../components/ErrorBoundary";
+import { toast } from "sonner";
 
 export default function FeedPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [user] = useAuthState(auth);
+  const [likedPosts, setLikedPosts] = useState<Set<string>>(new Set());
+
+  const handleFeedLike = async (postId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error("Sign in to like posts");
+      loginWithGoogle();
+      return;
+    }
+    const wasLiked = likedPosts.has(postId);
+    setLikedPosts(prev => {
+      const next = new Set(prev);
+      wasLiked ? next.delete(postId) : next.add(postId);
+      return next;
+    });
+    try {
+      const reactionRef = doc(db, `posts/${postId}/reactions`, user.uid);
+      const postRef = doc(db, `posts/${postId}`);
+      if (wasLiked) {
+        await deleteDoc(reactionRef);
+        await updateDoc(postRef, { reactionsCount: increment(-1) });
+      } else {
+        await setDoc(reactionRef, { userId: user.uid, createdAt: serverTimestamp() });
+        await updateDoc(postRef, { reactionsCount: increment(1) });
+      }
+    } catch {
+      setLikedPosts(prev => {
+        const next = new Set(prev);
+        wasLiked ? next.add(postId) : next.delete(postId);
+        return next;
+      });
+    }
+  };
 
   useEffect(() => {
     import("firebase/firestore").then(({ doc, getDoc }) => {
@@ -135,9 +172,18 @@ export default function FeedPage() {
                               </div>
                             )}
 
-                            <div className="flex items-center gap-4 text-white/40 text-[13px] font-medium">
-                              <span className="flex items-center gap-1.5"><Flame className="w-4 h-4" /> {post.reactionsCount || 0}</span>
-                              <span className="flex items-center gap-1.5"><MessageCircle className="w-4 h-4" /> {post.commentsCount || 0}</span>
+                            <div className="flex items-center gap-2 text-[13px] font-medium mt-1">
+                              <button
+                                onClick={(e) => handleFeedLike(post.id, e)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all active:scale-95 ${likedPosts.has(post.id) ? 'text-[#ff3366] bg-[#ff3366]/10' : 'text-white/40 hover:bg-white/5 hover:text-white/60'}`}
+                              >
+                                <Flame className={`w-4 h-4 transition-all ${likedPosts.has(post.id) ? 'fill-[#ff3366] text-[#ff3366]' : ''}`} strokeWidth={2} />
+                                <span>{post.reactionsCount || 0}</span>
+                              </button>
+                              <span className="flex items-center gap-1.5 text-white/30 px-1">
+                                <MessageCircle className="w-4 h-4" strokeWidth={2} />
+                                <span>{post.commentsCount || 0}</span>
+                              </span>
                               {post.category && (
                                 <span className="ml-auto bg-[#ccff00]/10 text-[#ccff00] text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                                   {post.category}

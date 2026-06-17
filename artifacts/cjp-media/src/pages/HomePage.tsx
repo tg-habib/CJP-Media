@@ -21,7 +21,9 @@ export default function HomePage() {
       try {
         const profileSnap = await getDoc(doc(db, "settings", "profile"));
         if (profileSnap.exists()) setProfileSettings(profileSnap.data());
+      } catch (_) {}
 
+      try {
         const snap = await getDocs(query(collection(db, "posts"), orderBy("createdAt", "desc"), limit(10)));
         const latest = snap.docs.map(d => {
           const data = d.data();

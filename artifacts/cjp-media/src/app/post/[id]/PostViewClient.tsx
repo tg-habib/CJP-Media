@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet-async';
 import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
-import { db, auth, loginWithGoogle } from '../../../firebase';
+import { db, auth, loginWithGoogle, toggleBookmark } from '../../../firebase';
 import { ArrowLeft, MoreVertical, MessageCircle, Share2, Bookmark, Flame, Globe, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -79,13 +79,31 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
 
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  const handleBookmark = () => {
+  useEffect(() => {
+    if (!user || !id) return;
+    const ref = doc(db, 'users', user.uid, 'bookmarks', id);
+    const unsub = onSnapshot(ref, (snap) => setIsBookmarked(snap.exists()));
+    return () => unsub();
+  }, [user, id]);
+
+  const handleBookmark = async () => {
     if (!user) {
-      toast.error("Please login to save posts");
+      toast.error("Sign in to save posts");
+      loginWithGoogle();
       return;
     }
-    setIsBookmarked(!isBookmarked);
-    toast.success(isBookmarked ? "Removed from saved posts" : "Saved to your bookmarks");
+    const imgUrl = post.imageUrls?.[0] || post.imageUrl || post.heroUrl || post.image || '';
+    try {
+      const saved = await toggleBookmark(user.uid, {
+        id,
+        title: post.title || '',
+        imageUrl: imgUrl,
+        category: post.category || '',
+      });
+      toast.success(saved ? "Saved to bookmarks ✓" : "Removed from bookmarks");
+    } catch {
+      toast.error("Could not save bookmark");
+    }
   };
 
   const handleLike = async (): Promise<void> => {
@@ -285,11 +303,6 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
              {hasMultiple && (
                <div className="absolute top-3 right-3 bg-black/70 text-white text-[12px] font-bold px-2 py-1 rounded-md backdrop-blur-md pointer-events-none">
                  {currentImageIndex + 1}/{images.length}
-               </div>
-             )}
-             {!hasMultiple && (
-               <div className="absolute top-3 right-3 bg-black/70 text-white text-[12px] font-bold px-2 py-1 rounded-md backdrop-blur-md pointer-events-none">
-                 1/1
                </div>
              )}
           </div>

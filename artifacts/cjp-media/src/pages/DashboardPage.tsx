@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { Link } from 'wouter';
 import { Bookmark, Heart, LogOut, ChevronRight, Shield, RefreshCw } from 'lucide-react';
 import AuthGate from '../components/AuthGate';
 import BottomNav from '../components/BottomNav';
@@ -10,6 +12,16 @@ type Tab = 'profile' | 'bookmarks' | 'likes' | 'settings';
 export default function DashboardPage() {
   const [user, loading] = useAuthState(auth);
   const [activeTab, setActiveTab] = useState<Tab>('profile');
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user) return;
+    const q = query(collection(db, 'users', user.uid, 'bookmarks'), orderBy('savedAt', 'desc'));
+    const unsub = onSnapshot(q, (snap) => {
+      setBookmarks(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+    });
+    return () => unsub();
+  }, [user]);
 
   if (loading) {
     return (
@@ -75,7 +87,14 @@ export default function DashboardPage() {
                 activeTab === tab ? 'text-[#ccff00]' : 'text-white/30 hover:text-white/60'
               }`}
             >
-              {tab}
+              {tab === 'bookmarks' && bookmarks.length > 0 ? (
+                <span>
+                  {tab}
+                  <span className="ml-1 text-[9px] bg-[#ccff00]/20 text-[#ccff00] px-1 py-0.5 rounded-full">
+                    {bookmarks.length}
+                  </span>
+                </span>
+              ) : tab}
               {activeTab === tab && (
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[#ccff00] rounded-full" />
               )}
@@ -128,14 +147,57 @@ export default function DashboardPage() {
           )}
 
           {activeTab === 'bookmarks' && (
-            <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-10 flex flex-col items-center gap-4 text-center">
-              <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
-                <Bookmark className="w-6 h-6 text-white/30" />
-              </div>
-              <div>
-                <p className="text-white font-bold mb-1">No bookmarks yet</p>
-                <p className="text-white/40 text-sm">Posts you save will appear here.</p>
-              </div>
+            <div className="space-y-2">
+              {bookmarks.length === 0 ? (
+                <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-10 flex flex-col items-center gap-4 text-center">
+                  <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
+                    <Bookmark className="w-6 h-6 text-white/30" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold mb-1">No bookmarks yet</p>
+                    <p className="text-white/40 text-sm">Tap the bookmark icon on any post to save it here.</p>
+                  </div>
+                  <Link
+                    href="/feed"
+                    className="px-5 py-2.5 bg-[#ccff00] text-black font-bold rounded-full text-sm hover:bg-[#bbe600] transition-colors"
+                  >
+                    Browse Feed
+                  </Link>
+                </div>
+              ) : (
+                bookmarks.map((bm) => (
+                  <Link
+                    key={bm.postId}
+                    href={`/post/${bm.postId}`}
+                    className="flex gap-3 bg-[#111111] border border-white/[0.06] rounded-2xl p-3 hover:border-white/15 transition-all group active:scale-[0.98]"
+                  >
+                    {bm.imageUrl ? (
+                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-[#0a0a0a]">
+                        <img
+                          src={bm.imageUrl}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl shrink-0 bg-[#1a1a1a] flex items-center justify-center">
+                        <Bookmark className="w-5 h-5 text-white/20" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                      <p className="text-white font-semibold text-sm line-clamp-2 group-hover:text-[#ccff00] transition-colors leading-snug">
+                        {bm.title}
+                      </p>
+                      {bm.category && (
+                        <span className="text-[11px] text-[#ccff00]/60 font-bold uppercase tracking-wide">
+                          {bm.category}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/20 self-center shrink-0 group-hover:text-[#ccff00] transition-colors" />
+                  </Link>
+                ))
+              )}
             </div>
           )}
 

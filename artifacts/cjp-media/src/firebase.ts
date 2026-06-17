@@ -1,12 +1,38 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import firebaseConfig from './firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+export const toggleBookmark = async (
+  uid: string,
+  post: { id: string; title: string; imageUrl?: string; category?: string }
+) => {
+  const ref = doc(db, 'users', uid, 'bookmarks', post.id);
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    await deleteDoc(ref);
+    return false;
+  }
+  await setDoc(ref, {
+    postId: post.id,
+    title: post.title,
+    imageUrl: post.imageUrl || '',
+    category: post.category || '',
+    savedAt: serverTimestamp(),
+  });
+  return true;
+};
+
+export const getBookmarkStatus = async (uid: string, postId: string) => {
+  const ref = doc(db, 'users', uid, 'bookmarks', postId);
+  const snap = await getDoc(ref);
+  return snap.exists();
+};
 
 export const loginWithGoogle = async () => {
   try {

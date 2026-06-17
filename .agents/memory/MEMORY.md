@@ -1,0 +1,2 @@
+- [Firebase bookmark path](firebase-bookmarks.md) — bookmarks live at `users/{uid}/bookmarks/{postId}`, subscribe via onSnapshot for real-time status.
+- [HomePage settings-vs-posts fetch](homepage-fetch.md) — settings and posts must be in separate try/catches; one failure must not block the other.
