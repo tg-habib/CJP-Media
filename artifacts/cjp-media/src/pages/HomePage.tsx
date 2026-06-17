@@ -5,8 +5,8 @@ import { collection, query, orderBy, limit, doc, getDoc, onSnapshot } from "fire
 import { db } from "../firebase";
 import {
   Flame, ArrowRight, TrendingUp, Newspaper, Users, Eye,
-  ChevronRight, Megaphone, Zap, Star, Globe, Clock,
-  MessageCircle, ArrowUpRight, Radio
+  ChevronRight, Megaphone, Zap, Globe, Clock,
+  MessageCircle, ArrowUpRight, Radio, Mic2, Swords, Landmark, Sparkles, BarChart2
 } from "lucide-react";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
@@ -32,24 +32,24 @@ const timeAgo = (createdAt: any) => {
 
 function SkeletonCard({ className = "" }: { className?: string }) {
   return (
-    <div className={`rounded-3xl bg-[#111] border border-white/5 overflow-hidden animate-pulse ${className}`}>
-      <div className="aspect-video bg-white/5" />
+    <div className={`rounded-2xl bg-[#0e0e0e] border border-white/5 overflow-hidden animate-pulse ${className}`}>
+      <div className="aspect-video bg-white/[0.04]" />
       <div className="p-5 flex flex-col gap-3">
-        <div className="h-2.5 bg-white/5 rounded-full w-1/3" />
-        <div className="h-4 bg-white/5 rounded-full w-full" />
-        <div className="h-4 bg-white/5 rounded-full w-3/4" />
+        <div className="h-2 bg-white/[0.04] rounded-full w-1/4" />
+        <div className="h-4 bg-white/[0.04] rounded-full w-full" />
+        <div className="h-4 bg-white/[0.04] rounded-full w-2/3" />
       </div>
     </div>
   );
 }
 
 const CATEGORIES = [
-  { href: "/category/Trending",   emoji: "🔥", label: "Trending",    color: "#ff4500", bg: "rgba(255,69,0,0.10)" },
-  { href: "/category/Politics",   emoji: "🏛️", label: "Politics",    color: "#1d9bf0", bg: "rgba(29,155,240,0.10)" },
-  { href: "/category/Satire",     emoji: "😂", label: "Satire",      color: "#ccff00", bg: "rgba(204,255,0,0.10)" },
-  { href: "/category/Youth Voice",emoji: "✊", label: "Youth Voice", color: "#a855f7", bg: "rgba(168,85,247,0.10)" },
-  { href: "/category/Breaking",   emoji: "⚡", label: "Breaking",    color: "#f59e0b", bg: "rgba(245,158,11,0.10)" },
-  { href: "/feed",                emoji: "📰", label: "All Posts",   color: "#00ba7c", bg: "rgba(0,186,124,0.10)" },
+  { href: "/category/Trending",    label: "Trending",     Icon: TrendingUp,  color: "#ff4500" },
+  { href: "/category/Politics",    label: "Politics",     Icon: Landmark,    color: "#1d9bf0" },
+  { href: "/category/Satire",      label: "Satire",       Icon: Mic2,        color: "#ccff00" },
+  { href: "/category/Youth Voice", label: "Youth Voice",  Icon: Megaphone,   color: "#a855f7" },
+  { href: "/category/Breaking",    label: "Breaking",     Icon: Zap,         color: "#f59e0b" },
+  { href: "/feed",                 label: "All Posts",    Icon: Newspaper,   color: "#00ba7c" },
 ];
 
 export default function HomePage() {
@@ -115,31 +115,31 @@ export default function HomePage() {
       <meta property="og:image" content="/opengraph.jpg" />
       <meta name="twitter:card" content="summary_large_image" />
     </Helmet>
-    <div className="flex flex-col bg-[#000000] min-h-screen overflow-x-hidden pb-20 sm:pb-0">
+    <div className="flex flex-col bg-[#050505] min-h-screen overflow-x-hidden pb-20 sm:pb-0">
 
-      {/* ── HEADER ── */}
       <Header settings={profileSettings} />
 
-      {/* ── TOP BREAKING TICKER (dark, shows real post titles) ── */}
-      <div className="w-full bg-[#0e0e0e] border-b border-white/[0.06] overflow-hidden h-9 flex items-center">
-        <div className="shrink-0 bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-widest px-4 h-full flex items-center gap-1.5 z-10 whitespace-nowrap">
-          <Radio className="w-3 h-3" strokeWidth={3} /> LIVE
+      {/* ── BREAKING TICKER ── */}
+      <div className="w-full bg-[#0a0a0a] border-b border-white/[0.05] overflow-hidden h-9 flex items-center">
+        <div className="shrink-0 bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.18em] px-4 h-full flex items-center gap-2 z-10 whitespace-nowrap">
+          <Radio className="w-3 h-3" strokeWidth={2.5} /> LIVE
         </div>
         <div className="flex-1 overflow-hidden">
           <div className="flex w-[200%] animate-marquee whitespace-nowrap">
             {[0, 1].map(i => (
-              <div key={i} className="flex-1 flex items-center gap-8 text-white/50 text-[12px] font-semibold px-6">
+              <div key={i} className="flex-1 flex items-center gap-10 text-white/40 text-[11px] font-medium tracking-wide px-6">
                 {latestPosts.length > 0
-                  ? latestPosts.slice(0, 5).map((p, idx) => (
-                      <span key={idx} className="flex items-center gap-2 shrink-0">
-                        <span className="text-[#ccff00] shrink-0">•</span>{p.title}
+                  ? latestPosts.slice(0, 6).map((p, idx) => (
+                      <span key={idx} className="flex items-center gap-3 shrink-0">
+                        <span className="w-1 h-1 rounded-full bg-[#ccff00] shrink-0" />
+                        {p.title}
                       </span>
                     ))
                   : (
                     <>
-                      <span className="flex items-center gap-2 shrink-0"><span className="text-[#ccff00]">•</span> Voice of the Real Majority</span>
-                      <span className="flex items-center gap-2 shrink-0"><span className="text-[#ccff00]">•</span> CJP Media: Unfiltered News</span>
-                      <span className="flex items-center gap-2 shrink-0"><span className="text-[#ccff00]">•</span> Stay Awake. Stay Janta.</span>
+                      <span className="flex items-center gap-3 shrink-0"><span className="w-1 h-1 rounded-full bg-[#ccff00]" /> Voice of the Real Majority</span>
+                      <span className="flex items-center gap-3 shrink-0"><span className="w-1 h-1 rounded-full bg-[#ccff00]" /> CJP Media — Unfiltered</span>
+                      <span className="flex items-center gap-3 shrink-0"><span className="w-1 h-1 rounded-full bg-[#ccff00]" /> Stay Awake. Stay Janta.</span>
                     </>
                   )}
               </div>
@@ -149,112 +149,109 @@ export default function HomePage() {
       </div>
 
       {/* ── HERO ── */}
-      <section className="relative w-full overflow-hidden pt-8 sm:pt-12 pb-10">
-        {/* Decorative blobs */}
-        <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-[#ccff00]/7 rounded-full blur-[140px] -translate-y-1/3 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#ccff00]/4 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
+      <section className="relative w-full overflow-hidden pt-10 sm:pt-14 pb-12">
+        <div className="absolute top-0 right-0 w-[800px] h-[600px] bg-[#ccff00]/[0.05] rounded-full blur-[160px] -translate-y-1/3 translate-x-1/2 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#ccff00]/[0.03] rounded-full blur-[120px] translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
-        {/* Hero background image overlay */}
         {profileSettings?.heroUrl && (
           <div className="absolute inset-0 pointer-events-none hidden sm:block">
             <img
               src={profileSettings.heroUrl}
               style={{ objectPosition: profileSettings.heroPosition || "center" }}
-              className="absolute inset-0 w-full h-full object-cover opacity-15"
+              className="absolute inset-0 w-full h-full object-cover opacity-[0.08]"
               alt=""
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/80 to-black" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/60 via-[#050505]/80 to-[#050505]" />
           </div>
         )}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
             {/* LEFT — copy */}
             <div className="flex flex-col items-start">
-              {/* Live badge */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 mb-6 backdrop-blur-md">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08] mb-8">
                 <span className="relative flex h-2 w-2 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-75" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-60" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ccff00]" />
                 </span>
-                <span className="text-white/60 text-[11px] font-bold uppercase tracking-widest">
+                <span className="text-white/50 text-[11px] font-semibold uppercase tracking-[0.16em]">
                   {latestPosts.length > 0 ? `${latestPosts.length} Stories Live` : "Join the Movement"}
                 </span>
               </div>
 
-              <h1 className="text-[58px] sm:text-[74px] lg:text-[88px] font-black text-white tracking-[-3px] leading-[0.88] mb-6">
+              <h1 className="text-[56px] sm:text-[72px] lg:text-[86px] font-black text-white tracking-[-3.5px] leading-[0.88] mb-7">
                 Voice<br />of the<br /><span className="text-[#ccff00]">Real<br />Majority.</span>
               </h1>
 
-              <p className="text-[15px] sm:text-[17px] text-white/50 max-w-[360px] font-medium mb-8 leading-relaxed">
+              <p className="text-[15px] sm:text-base text-white/45 max-w-[380px] font-normal mb-10 leading-[1.75]">
                 The official media wing of the Cockroach Janta Party — unfiltered satire, roasts, and the news they don't want you to see.
               </p>
 
-              <div className="flex items-center gap-3 flex-wrap mb-8">
-                <Link href="/feed" className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#ccff00] text-black font-extrabold text-[15px] rounded-full hover:bg-[#bbe600] transition-all duration-300 shadow-[0_0_35px_rgba(204,255,0,0.3)] hover:shadow-[0_0_50px_rgba(204,255,0,0.45)]">
+              <div className="flex items-center gap-3 flex-wrap mb-10">
+                <Link href="/feed" className="group inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#ccff00] text-black font-bold text-[14px] tracking-wide rounded-full hover:bg-white transition-all duration-200 shadow-[0_0_40px_rgba(204,255,0,0.2)]">
                   Enter the Feed
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                 </Link>
-                <Link href="/category/Trending" className="inline-flex items-center gap-2 px-6 py-3.5 bg-white/5 border border-white/10 text-white font-bold text-[15px] rounded-full hover:bg-white/10 hover:border-white/20 transition-all">
-                  <TrendingUp className="w-4 h-4 text-[#ccff00]" />
+                <Link href="/category/Trending" className="inline-flex items-center gap-2 px-6 py-3.5 bg-transparent border border-white/10 text-white/70 font-medium text-[14px] rounded-full hover:bg-white/[0.04] hover:border-white/20 hover:text-white transition-all">
+                  <TrendingUp className="w-3.5 h-3.5 text-[#ccff00]" strokeWidth={2} />
                   Trending
                 </Link>
               </div>
 
-              {/* Social proof row */}
-              <div className="flex items-center gap-5 pt-7 border-t border-white/[0.06] w-full">
+              {/* Stats row */}
+              <div className="flex items-center gap-6 pt-7 border-t border-white/[0.06] w-full">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex -space-x-2">
+                  <div className="flex -space-x-2.5">
                     {[11,12,13,14].map(n => (
-                      <img key={n} src={`https://i.pravatar.cc/80?img=${n}`} alt="" className="w-7 h-7 rounded-full border-[1.5px] border-black object-cover" />
+                      <img key={n} src={`https://i.pravatar.cc/80?img=${n}`} alt="" className="w-7 h-7 rounded-full border-2 border-[#050505] object-cover" />
                     ))}
                   </div>
                   <div>
-                    <div className="text-white font-extrabold text-[13px] leading-tight">12.7K+</div>
-                    <div className="text-white/40 text-[10px] leading-tight">Supporters</div>
+                    <div className="text-white font-bold text-[13px] leading-tight">12.7K+</div>
+                    <div className="text-white/30 text-[10px] font-medium leading-tight mt-0.5">Supporters</div>
                   </div>
                 </div>
-                <div className="w-px h-8 bg-white/10" />
+                <div className="w-px h-7 bg-white/[0.07]" />
                 <div>
-                  <div className="text-white font-extrabold text-[13px] leading-tight">{latestPosts.length || "--"}</div>
-                  <div className="text-white/40 text-[10px] leading-tight">Posts</div>
+                  <div className="text-white font-bold text-[13px] leading-tight">{latestPosts.length || "—"}</div>
+                  <div className="text-white/30 text-[10px] font-medium leading-tight mt-0.5">Posts</div>
                 </div>
-                <div className="w-px h-8 bg-white/10" />
+                <div className="w-px h-7 bg-white/[0.07]" />
                 <div>
-                  <div className="text-white font-extrabold text-[13px] leading-tight">{totalViews > 0 ? fmtNum(totalViews) : "--"}</div>
-                  <div className="text-white/40 text-[10px] leading-tight">Total Views</div>
+                  <div className="text-white font-bold text-[13px] leading-tight">{totalViews > 0 ? fmtNum(totalViews) : "—"}</div>
+                  <div className="text-white/30 text-[10px] font-medium leading-tight mt-0.5">Views</div>
                 </div>
-                <div className="w-px h-8 bg-white/10" />
+                <div className="w-px h-7 bg-white/[0.07]" />
                 <div>
-                  <div className="text-[#ff4500] font-extrabold text-[13px] leading-tight">{totalReactions > 0 ? fmtNum(totalReactions) : "--"}</div>
-                  <div className="text-white/40 text-[10px] leading-tight">Reactions</div>
+                  <div className="text-[#ccff00] font-bold text-[13px] leading-tight">{totalReactions > 0 ? fmtNum(totalReactions) : "—"}</div>
+                  <div className="text-white/30 text-[10px] font-medium leading-tight mt-0.5">Reactions</div>
                 </div>
               </div>
             </div>
 
-            {/* RIGHT — featured post preview card (desktop only) */}
+            {/* RIGHT — featured post card */}
             <div className="hidden lg:block">
               {featuredPost ? (
-                <Link href={`/post/${featuredPost.id}`} className="group block relative rounded-[36px] overflow-hidden border border-white/10 hover:border-[#ccff00]/40 transition-all duration-500 cursor-pointer" style={{ aspectRatio: "4/5" }}>
+                <Link href={`/post/${featuredPost.id}`} className="group block relative rounded-3xl overflow-hidden border border-white/[0.07] hover:border-white/[0.16] transition-all duration-500 cursor-pointer shadow-[0_32px_80px_rgba(0,0,0,0.5)]" style={{ aspectRatio: "4/5" }}>
                   {getPostImg(featuredPost) ? (
                     <img
                       src={getPostImg(featuredPost)}
                       alt={featuredPost.title}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#111] to-[#1a1a1a] flex items-center justify-center">
-                      <Flame className="w-16 h-16 text-[#ccff00]/30" />
+                    <div className="absolute inset-0 bg-[#111] flex items-center justify-center">
+                      <Flame className="w-14 h-14 text-[#ccff00]/20" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/98 via-black/30 to-transparent" />
                   <div className="absolute top-5 left-5 flex gap-2">
-                    <span className="bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                      <Flame className="w-2.5 h-2.5" strokeWidth={3} /> Featured
+                    <span className="bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.14em] px-3 py-1.5 rounded-full">
+                      Featured
                     </span>
                     {featuredPost.category && (
-                      <span className="bg-black/70 backdrop-blur-md text-white/80 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full border border-white/10">
+                      <span className="bg-black/60 backdrop-blur-md text-white/70 text-[10px] font-semibold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full border border-white/10">
                         {featuredPost.category}
                       </span>
                     )}
@@ -262,31 +259,31 @@ export default function HomePage() {
                   <div className="absolute bottom-0 left-0 right-0 p-7">
                     <div className="flex items-center gap-2 mb-3">
                       {profileSettings?.avatarUrl ? (
-                        <img src={profileSettings.avatarUrl} alt="" className="w-5 h-5 rounded-full object-cover border border-[#ccff00]/30" />
+                        <img src={profileSettings.avatarUrl} alt="" className="w-5 h-5 rounded-full object-cover" />
                       ) : (
-                        <div className="w-5 h-5 rounded-full bg-[#ccff00]/20 flex items-center justify-center border border-[#ccff00]/30">
+                        <div className="w-5 h-5 rounded-full bg-[#ccff00]/10 flex items-center justify-center border border-[#ccff00]/20">
                           <Flame className="w-2.5 h-2.5 text-[#ccff00]" />
                         </div>
                       )}
-                      <span className="text-white/60 text-[12px] font-bold flex items-center gap-1">
+                      <span className="text-white/50 text-[12px] font-medium flex items-center gap-1">
                         {profileSettings?.name || "CJP Media"}
                         <VerifiedBadge className="w-3 h-3" />
                       </span>
                     </div>
-                    <h3 className="text-white font-black text-[22px] leading-tight mb-3 group-hover:text-[#ccff00] transition-colors line-clamp-3">
+                    <h3 className="text-white font-black text-[22px] leading-[1.18] mb-4 group-hover:text-[#ccff00] transition-colors duration-300 line-clamp-3">
                       {featuredPost.title}
                     </h3>
-                    <div className="flex items-center gap-4 text-white/50 text-[12px] font-semibold">
+                    <div className="flex items-center gap-4 text-white/35 text-[11px] font-medium">
                       <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" />{fmtNum(featuredPost.viewsCount||0)}</span>
                       <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-[#ff4500]" />{fmtNum(featuredPost.reactionsCount||0)}</span>
-                      <span className="flex items-center gap-1.5 ml-auto"><Clock className="w-3.5 h-3.5" />{timeAgo(featuredPost.createdAt)}</span>
+                      <span className="flex items-center gap-1.5 ml-auto text-white/25"><Clock className="w-3.5 h-3.5" />{timeAgo(featuredPost.createdAt)}</span>
                     </div>
                   </div>
                 </Link>
               ) : (
                 !loading && (
-                  <div className="rounded-[36px] bg-[#0c0c0c] border border-white/5 flex items-center justify-center" style={{aspectRatio:"4/5"}}>
-                    <Flame className="w-12 h-12 text-[#ccff00]/20" />
+                  <div className="rounded-3xl bg-[#0a0a0a] border border-white/[0.05] flex items-center justify-center" style={{aspectRatio:"4/5"}}>
+                    <Flame className="w-10 h-10 text-white/5" />
                   </div>
                 )
               )}
@@ -295,74 +292,75 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── YELLOW SCROLLING STRIP ── */}
-      <div className="w-full bg-[#ccff00] text-black overflow-hidden py-2.5 relative">
+      {/* ── ACCENT STRIP ── */}
+      <div className="w-full bg-[#ccff00] overflow-hidden py-2.5">
         <div className="flex w-[200%] animate-marquee whitespace-nowrap">
           {[0, 1].map(i => (
-            <div key={i} className="flex-1 flex items-center justify-around font-extrabold text-[11px] uppercase tracking-widest gap-8 pr-8">
-              <span className="flex items-center gap-2 shrink-0"><Flame className="w-3.5 h-3.5" strokeWidth={3} /> Breaking News</span>
-              <span className="flex items-center gap-2 shrink-0"><TrendingUp className="w-3.5 h-3.5" strokeWidth={3} /> Viral Roasts</span>
-              <span className="flex items-center gap-2 shrink-0"><Megaphone className="w-3.5 h-3.5" strokeWidth={3} /> Uncensored Opinions</span>
-              <span className="flex items-center gap-2 shrink-0"><Users className="w-3.5 h-3.5" strokeWidth={3} /> Youth Voice</span>
-              <span className="flex items-center gap-2 shrink-0"><Zap className="w-3.5 h-3.5" strokeWidth={3} /> Stay Awake. Stay Janta.</span>
-              <span className="flex items-center gap-2 shrink-0"><Star className="w-3.5 h-3.5" strokeWidth={3} /> CJP Media</span>
+            <div key={i} className="flex-1 flex items-center font-black text-[10px] uppercase tracking-[0.18em] gap-10 pr-10 text-black/70">
+              <span className="shrink-0 flex items-center gap-2"><Flame className="w-3 h-3" strokeWidth={3} />Breaking News</span>
+              <span className="shrink-0 flex items-center gap-2"><TrendingUp className="w-3 h-3" strokeWidth={3} />Viral Roasts</span>
+              <span className="shrink-0 flex items-center gap-2"><Megaphone className="w-3 h-3" strokeWidth={3} />Uncensored Opinions</span>
+              <span className="shrink-0 flex items-center gap-2"><Users className="w-3 h-3" strokeWidth={3} />Youth Voice</span>
+              <span className="shrink-0 flex items-center gap-2"><Zap className="w-3 h-3" strokeWidth={3} />Stay Awake. Stay Janta.</span>
+              <span className="shrink-0 flex items-center gap-2"><Radio className="w-3 h-3" strokeWidth={3} />CJP Media</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── PLATFORM STATS STRIP ── */}
-      <div className="w-full bg-[#080808] border-b border-white/[0.05]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 sm:grid-cols-6 divide-x divide-white/[0.05]">
+      {/* ── STATS BAR ── */}
+      <div className="w-full bg-[#050505] border-b border-white/[0.04]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-3 sm:grid-cols-6 divide-x divide-white/[0.04]">
           {[
-            { label: "Stories",    value: latestPosts.length || "--", icon: Newspaper, color: "text-white" },
-            { label: "Total Views",value: fmtNum(totalViews || 0),   icon: Eye,        color: "text-[#1d9bf0]" },
-            { label: "Reactions",  value: fmtNum(totalReactions||0), icon: Flame,      color: "text-[#ff4500]" },
-            { label: "Supporters", value: "12.7K+",                  icon: Users,      color: "text-[#a855f7]" },
-            { label: "Topics",     value: "6+",                      icon: Globe,      color: "text-[#00ba7c]" },
-            { label: "Daily Active",value: "500+",                   icon: Zap,        color: "text-[#ccff00]" },
-          ].map(({ label, value, icon: Icon, color }) => (
-            <div key={label} className="flex flex-col items-center justify-center py-4 sm:py-5 gap-1">
-              <Icon className={`w-4 h-4 mb-0.5 ${color}`} strokeWidth={2} />
-              <span className="font-extrabold text-white text-[17px] sm:text-[21px] tracking-tight leading-none">{value}</span>
-              <span className="text-white/35 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">{label}</span>
+            { label: "Stories",      value: latestPosts.length || "—", Icon: Newspaper,  color: "text-white/60" },
+            { label: "Total Views",  value: fmtNum(totalViews || 0),   Icon: Eye,         color: "text-[#1d9bf0]/70" },
+            { label: "Reactions",    value: fmtNum(totalReactions||0), Icon: Flame,       color: "text-[#ff4500]/70" },
+            { label: "Supporters",   value: "12.7K+",                  Icon: Users,       color: "text-[#a855f7]/70" },
+            { label: "Topics",       value: "6+",                      Icon: Globe,       color: "text-[#00ba7c]/70" },
+            { label: "Daily Active", value: "500+",                    Icon: BarChart2,   color: "text-[#ccff00]/70" },
+          ].map(({ label, value, Icon, color }) => (
+            <div key={label} className="flex flex-col items-center justify-center py-4 sm:py-5 gap-1.5">
+              <Icon className={`w-3.5 h-3.5 ${color}`} strokeWidth={1.75} />
+              <span className="font-bold text-white text-[16px] sm:text-[20px] tracking-tight leading-none">{value}</span>
+              <span className="text-white/25 text-[9px] font-medium uppercase tracking-[0.12em]">{label}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ── BROWSE TOPICS ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4 w-full">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-white font-black text-[20px] sm:text-[24px] tracking-tight">Browse Topics</h2>
-          <Link href="/feed" className="text-white/40 hover:text-[#ccff00] text-[12px] font-bold flex items-center gap-1 transition-colors">
-            All posts <ChevronRight className="w-4 h-4" />
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-4 w-full">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-white font-bold text-[18px] sm:text-[20px] tracking-tight">Browse Topics</h2>
+          <Link href="/feed" className="text-white/30 hover:text-[#ccff00] text-[12px] font-medium flex items-center gap-1 transition-colors">
+            All posts <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5 sm:gap-3">
-          {CATEGORIES.map(({ href, emoji, label, color, bg }) => (
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+          {CATEGORIES.map(({ href, label, Icon, color }) => (
             <Link
               key={href} href={href}
-              className="group flex flex-col items-center justify-center gap-2 py-4 sm:py-5 px-2 rounded-2xl border transition-all duration-300 cursor-pointer text-center hover:scale-105"
-              style={{ borderColor: `${color}25`, backgroundColor: bg }}
+              className="group flex flex-col items-center justify-center gap-2.5 py-5 px-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-200 text-center"
             >
-              <span className="text-[26px] sm:text-[30px] group-hover:scale-110 transition-transform duration-200 leading-none">{emoji}</span>
-              <span className="font-extrabold text-[11px] sm:text-[12px] text-white/80 tracking-tight">{label}</span>
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${color}14` }}>
+                <Icon className="w-4 h-4" style={{ color }} strokeWidth={1.75} />
+              </div>
+              <span className="font-semibold text-[11px] sm:text-[12px] text-white/60 group-hover:text-white/90 tracking-wide transition-colors">{label}</span>
             </Link>
           ))}
         </div>
       </section>
 
       {/* ── LATEST STORIES ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div className="flex items-center justify-between mb-6">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
+        <div className="flex items-center justify-between mb-7">
           <div className="flex items-center gap-3">
-            <div className="w-1 h-6 bg-[#ccff00] rounded-full" />
-            <h2 className="text-white font-black text-[20px] sm:text-[24px] tracking-tight">Latest Stories</h2>
-            <span className="bg-white/5 border border-white/10 text-white/40 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Live</span>
+            <div className="w-[3px] h-5 bg-[#ccff00] rounded-full" />
+            <h2 className="text-white font-bold text-[18px] sm:text-[20px] tracking-tight">Latest Stories</h2>
+            <span className="bg-[#ccff00]/10 text-[#ccff00] text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-[0.14em] border border-[#ccff00]/15">Live</span>
           </div>
-          <Link href="/feed" className="text-white/40 hover:text-[#ccff00] text-[12px] font-bold flex items-center gap-1 transition-colors">
-            View all <ChevronRight className="w-4 h-4" />
+          <Link href="/feed" className="text-white/30 hover:text-[#ccff00] text-[12px] font-medium flex items-center gap-1 transition-colors">
+            View all <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
@@ -375,43 +373,43 @@ export default function HomePage() {
             </div>
           </div>
         ) : latestPosts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
-            <Flame className="w-10 h-10 text-[#ccff00]/30" />
-            <p className="text-white/30 font-semibold">No stories yet. Check back soon.</p>
-            <Link href="/feed" className="text-[#ccff00] font-bold text-sm hover:underline">Go to Feed →</Link>
+          <div className="flex flex-col items-center justify-center py-24 gap-4 text-center">
+            <Newspaper className="w-8 h-8 text-white/10" strokeWidth={1.5} />
+            <p className="text-white/25 font-medium text-[14px]">No stories yet. Check back soon.</p>
+            <Link href="/feed" className="text-[#ccff00] font-semibold text-sm hover:underline">Go to Feed</Link>
           </div>
         ) : (
           <>
             {/* Hero + 2 stacked */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
               {featuredPost && (
-                <Link href={`/post/${featuredPost.id}`} className="lg:col-span-8 group relative rounded-[28px] overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300 block cursor-pointer" style={{ minHeight: 420 }}>
+                <Link href={`/post/${featuredPost.id}`} className="lg:col-span-8 group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.14] transition-all duration-300 block cursor-pointer" style={{ minHeight: 400 }}>
                   {getPostImg(featuredPost) ? (
-                    <img src={getPostImg(featuredPost)} alt={featuredPost.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img src={getPostImg(featuredPost)} alt={featuredPost.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
                   ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#111] to-[#1a1a1a] flex items-center justify-center">
-                      <Flame className="w-20 h-20 text-[#ccff00]/20" />
+                    <div className="absolute inset-0 bg-[#0e0e0e] flex items-center justify-center">
+                      <Flame className="w-16 h-16 text-white/5" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/96 via-black/40 to-transparent" />
                   <div className="absolute top-4 left-4 flex gap-2 z-10">
-                    <span className="bg-black/70 backdrop-blur-md border border-white/10 text-white text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-[#ccff00] rounded-full animate-pulse" />Just In
+                    <span className="bg-black/60 backdrop-blur-md border border-white/10 text-white/70 text-[10px] font-semibold uppercase tracking-[0.12em] px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 bg-[#ccff00] rounded-full" />Just In
                     </span>
                     {featuredPost.category && (
-                      <span className="bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full">{featuredPost.category}</span>
+                      <span className="bg-[#ccff00] text-black text-[10px] font-bold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full">{featuredPost.category}</span>
                     )}
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 z-10">
-                    <h3 className="text-white font-black text-[24px] sm:text-[32px] leading-[1.1] mb-3 group-hover:text-[#ccff00] transition-colors">{featuredPost.title}</h3>
+                    <h3 className="text-white font-black text-[22px] sm:text-[30px] leading-[1.15] mb-3 group-hover:text-[#ccff00] transition-colors duration-300">{featuredPost.title}</h3>
                     {featuredPost.roast && (
-                      <p className="text-white/55 text-[14px] leading-relaxed line-clamp-2 mb-4 italic">"{featuredPost.roast}"</p>
+                      <p className="text-white/40 text-[13px] leading-relaxed line-clamp-2 mb-4 italic">{featuredPost.roast}</p>
                     )}
-                    <div className="flex items-center gap-4 text-white/45 text-[12px] font-semibold">
+                    <div className="flex items-center gap-4 text-white/35 text-[11px] font-medium">
                       <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" />{fmtNum(featuredPost.viewsCount||0)}</span>
                       <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-[#ff4500]" />{fmtNum(featuredPost.reactionsCount||0)}</span>
                       <span className="flex items-center gap-1.5"><MessageCircle className="w-3.5 h-3.5" />{featuredPost.commentsCount||0}</span>
-                      <span className="flex items-center gap-1.5 ml-auto"><Clock className="w-3.5 h-3.5" />{timeAgo(featuredPost.createdAt)}</span>
+                      <span className="flex items-center gap-1.5 ml-auto text-white/25"><Clock className="w-3 h-3" />{timeAgo(featuredPost.createdAt)}</span>
                     </div>
                   </div>
                 </Link>
@@ -419,19 +417,19 @@ export default function HomePage() {
 
               <div className="lg:col-span-4 flex flex-col gap-4">
                 {secondaryPosts.slice(0, 2).map(post => (
-                  <Link key={post.id} href={`/post/${post.id}`} className="group flex-1 relative rounded-[24px] overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300 flex flex-col cursor-pointer" style={{ minHeight: 190 }}>
+                  <Link key={post.id} href={`/post/${post.id}`} className="group flex-1 relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.14] transition-all duration-300 flex flex-col cursor-pointer" style={{ minHeight: 188 }}>
                     {getPostImg(post) ? (
-                      <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-70" />
+                      <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 opacity-60" />
                     ) : (
-                      <div className="absolute inset-0 bg-[#111]" />
+                      <div className="absolute inset-0 bg-[#0e0e0e]" />
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/97 via-black/50 to-transparent" />
                     <div className="absolute top-3 left-3">
-                      {post.category && <span className="bg-black/70 backdrop-blur-md border border-white/10 text-white/70 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full">{post.category}</span>}
+                      {post.category && <span className="bg-black/60 backdrop-blur-md border border-white/10 text-white/55 text-[10px] font-medium uppercase tracking-[0.1em] px-2.5 py-1 rounded-full">{post.category}</span>}
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-                      <h3 className="text-white font-bold text-[15px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors line-clamp-2">{post.title}</h3>
-                      <div className="flex items-center gap-3 text-white/40 text-[11px] font-semibold">
+                      <h3 className="text-white font-bold text-[14px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors duration-300 line-clamp-2">{post.title}</h3>
+                      <div className="flex items-center gap-3 text-white/30 text-[10px] font-medium">
                         <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{fmtNum(post.viewsCount||0)}</span>
                         <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-[#ff4500]" />{fmtNum(post.reactionsCount||0)}</span>
                         <span className="ml-auto">{timeAgo(post.createdAt)}</span>
@@ -442,24 +440,24 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* 2 more horizontal thumbnail cards */}
+            {/* 2 horizontal cards */}
             {secondaryPosts.length > 2 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-1">
                 {secondaryPosts.slice(2, 4).map(post => (
-                  <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 rounded-[20px] border border-white/5 hover:border-white/12 hover:bg-white/[0.015] transition-all p-4 cursor-pointer items-center">
-                    <div className="w-[110px] h-[80px] rounded-[14px] overflow-hidden shrink-0 relative bg-[#111]">
+                  <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 rounded-2xl border border-white/[0.05] hover:border-white/[0.10] hover:bg-white/[0.015] transition-all p-4 cursor-pointer items-center">
+                    <div className="w-[104px] h-[76px] rounded-xl overflow-hidden shrink-0 relative bg-[#0e0e0e]">
                       {getPostImg(post) && <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
                     </div>
-                    <div className="flex flex-col flex-1 py-0.5 min-w-0">
-                      {post.category && <span className="text-[#ccff00] text-[10px] font-black uppercase tracking-wider mb-1.5">{post.category}</span>}
-                      <h3 className="text-white font-bold text-[14px] sm:text-[15px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors line-clamp-2">{post.title}</h3>
-                      <div className="flex items-center gap-3 text-white/40 text-[11px] font-semibold">
+                    <div className="flex flex-col flex-1 min-w-0">
+                      {post.category && <span className="text-[#ccff00] text-[9px] font-bold uppercase tracking-[0.14em] mb-1.5">{post.category}</span>}
+                      <h3 className="text-white font-semibold text-[13px] sm:text-[14px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors duration-200 line-clamp-2">{post.title}</h3>
+                      <div className="flex items-center gap-3 text-white/30 text-[10px] font-medium">
                         <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{fmtNum(post.viewsCount||0)}</span>
                         <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-[#ff4500]" />{fmtNum(post.reactionsCount||0)}</span>
-                        <span className="ml-auto text-white/30">{timeAgo(post.createdAt)}</span>
+                        <span className="ml-auto text-white/20">{timeAgo(post.createdAt)}</span>
                       </div>
                     </div>
-                    <ArrowUpRight className="w-4 h-4 text-white/10 group-hover:text-[#ccff00] transition-colors shrink-0" />
+                    <ArrowUpRight className="w-4 h-4 text-white/10 group-hover:text-[#ccff00]/60 transition-colors shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -471,66 +469,64 @@ export default function HomePage() {
       {/* ── TRENDING ── */}
       {trendingPosts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-7">
             <div className="flex items-center gap-3">
-              <div className="w-1 h-6 bg-[#ff4500] rounded-full" />
-              <h2 className="text-white font-black text-[20px] sm:text-[24px] tracking-tight">Trending Now</h2>
-              <span className="bg-[#ff4500]/10 border border-[#ff4500]/20 text-[#ff4500] text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
-                <Flame className="w-2.5 h-2.5" strokeWidth={3} /> Hot
+              <div className="w-[3px] h-5 bg-[#ff4500] rounded-full" />
+              <h2 className="text-white font-bold text-[18px] sm:text-[20px] tracking-tight">Trending Now</h2>
+              <span className="bg-[#ff4500]/10 border border-[#ff4500]/15 text-[#ff4500] text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-[0.14em]">
+                Hot
               </span>
             </div>
-            <Link href="/category/Trending" className="text-white/40 hover:text-[#ccff00] text-[12px] font-bold flex items-center gap-1 transition-colors">
-              See all <ChevronRight className="w-4 h-4" />
+            <Link href="/category/Trending" className="text-white/30 hover:text-[#ccff00] text-[12px] font-medium flex items-center gap-1 transition-colors">
+              See all <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* #1 Big card */}
             {trendingPosts[0] && (
-              <Link href={`/post/${trendingPosts[0].id}`} className="group relative rounded-[28px] overflow-hidden border border-white/5 hover:border-[#ff4500]/30 transition-all duration-300 block cursor-pointer" style={{ minHeight: 380 }}>
+              <Link href={`/post/${trendingPosts[0].id}`} className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#ff4500]/20 transition-all duration-300 block cursor-pointer" style={{ minHeight: 360 }}>
                 {getPostImg(trendingPosts[0]) ? (
-                  <img src={getPostImg(trendingPosts[0])} alt={trendingPosts[0].title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={getPostImg(trendingPosts[0])} alt={trendingPosts[0].title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
                 ) : (
-                  <div className="absolute inset-0 bg-[#111]" />
+                  <div className="absolute inset-0 bg-[#0e0e0e]" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/97 via-black/40 to-transparent" />
                 <div className="absolute top-4 left-4">
-                  <span className="bg-[#ff4500] text-white text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full flex items-center gap-1.5">
-                    <Flame className="w-2.5 h-2.5" strokeWidth={3} /> #1 Trending
+                  <span className="bg-[#ff4500] text-white text-[10px] font-bold uppercase tracking-[0.12em] px-3 py-1.5 rounded-full">
+                    #1 Trending
                   </span>
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 z-10">
                   {trendingPosts[0].category && (
-                    <span className="text-[#ff4500] text-[10px] font-black uppercase tracking-wider block mb-2">{trendingPosts[0].category}</span>
+                    <span className="text-[#ff4500]/80 text-[10px] font-semibold uppercase tracking-[0.14em] block mb-2">{trendingPosts[0].category}</span>
                   )}
-                  <h3 className="text-white font-black text-[22px] sm:text-[28px] leading-tight mb-3 group-hover:text-[#ccff00] transition-colors">{trendingPosts[0].title}</h3>
-                  <div className="flex items-center gap-4 text-white/45 text-[12px] font-semibold">
+                  <h3 className="text-white font-black text-[20px] sm:text-[26px] leading-tight mb-3 group-hover:text-[#ccff00] transition-colors duration-300">{trendingPosts[0].title}</h3>
+                  <div className="flex items-center gap-4 text-white/35 text-[11px] font-medium">
                     <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" />{fmtNum(trendingPosts[0].viewsCount||0)}</span>
                     <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-[#ff4500]" />{fmtNum(trendingPosts[0].reactionsCount||0)}</span>
-                    <span className="flex items-center gap-1.5 ml-auto"><Clock className="w-3.5 h-3.5" />{timeAgo(trendingPosts[0].createdAt)}</span>
+                    <span className="flex items-center gap-1.5 ml-auto text-white/25"><Clock className="w-3.5 h-3.5" />{timeAgo(trendingPosts[0].createdAt)}</span>
                   </div>
                 </div>
               </Link>
             )}
 
-            {/* #2–#5 ranked list */}
-            <div className="flex flex-col gap-2.5">
+            <div className="flex flex-col gap-2">
               {trendingPosts.slice(1, 5).map((post, i) => (
-                <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 rounded-[18px] border border-white/5 hover:border-white/15 hover:bg-white/[0.02] transition-all p-3.5 cursor-pointer items-center">
-                  <span className="text-[26px] font-black text-white/10 w-9 shrink-0 text-center leading-none tabular-nums">#{i+2}</span>
-                  <div className="w-[78px] h-[60px] rounded-[12px] overflow-hidden shrink-0 relative bg-[#111]">
+                <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 rounded-xl border border-white/[0.05] hover:border-white/[0.10] hover:bg-white/[0.015] transition-all p-3.5 cursor-pointer items-center">
+                  <span className="text-[20px] font-black text-white/[0.08] w-8 shrink-0 text-center leading-none tabular-nums">#{i+2}</span>
+                  <div className="w-[72px] h-[56px] rounded-xl overflow-hidden shrink-0 relative bg-[#0e0e0e]">
                     {getPostImg(post) && <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
                   </div>
                   <div className="flex flex-col flex-1 min-w-0">
-                    {post.category && <span className="text-[#ccff00] text-[10px] font-black uppercase tracking-wider mb-0.5">{post.category}</span>}
-                    <h3 className="text-white font-bold text-[14px] leading-tight group-hover:text-[#ccff00] transition-colors line-clamp-2">{post.title}</h3>
-                    <div className="flex items-center gap-2 mt-1.5 text-white/40 text-[11px] font-semibold">
+                    {post.category && <span className="text-[#ccff00] text-[9px] font-bold uppercase tracking-[0.14em] mb-0.5">{post.category}</span>}
+                    <h3 className="text-white font-semibold text-[13px] leading-tight group-hover:text-[#ccff00] transition-colors duration-200 line-clamp-2">{post.title}</h3>
+                    <div className="flex items-center gap-2 mt-1.5 text-white/25 text-[10px] font-medium">
                       <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{fmtNum(post.viewsCount||0)}</span>
                       <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-[#ff4500]" />{fmtNum(post.reactionsCount||0)}</span>
-                      <span className="ml-auto text-white/25">{timeAgo(post.createdAt)}</span>
+                      <span className="ml-auto text-white/20">{timeAgo(post.createdAt)}</span>
                     </div>
                   </div>
-                  <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-[#ccff00] transition-colors shrink-0" />
+                  <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-[#ccff00]/50 transition-colors shrink-0" />
                 </Link>
               ))}
             </div>
@@ -538,34 +534,34 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── MOST READ (horizontal scroll) ── */}
+      {/* ── MOST READ ── */}
       {mostRead.length > 0 && (
         <section className="py-8 w-full overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-5 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-1 h-6 bg-[#1d9bf0] rounded-full" />
-              <h2 className="text-white font-black text-[20px] sm:text-[24px] tracking-tight">Most Read</h2>
+              <div className="w-[3px] h-5 bg-[#1d9bf0] rounded-full" />
+              <h2 className="text-white font-bold text-[18px] sm:text-[20px] tracking-tight">Most Read</h2>
             </div>
-            <Link href="/feed" className="text-white/40 hover:text-[#ccff00] text-[12px] font-bold flex items-center gap-1 transition-colors">
-              See all <ChevronRight className="w-4 h-4" />
+            <Link href="/feed" className="text-white/30 hover:text-[#ccff00] text-[12px] font-medium flex items-center gap-1 transition-colors">
+              See all <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
-          <div className="flex gap-3.5 overflow-x-auto scrollbar-hide pb-2 px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2 px-4 sm:px-6 lg:px-8">
             {mostRead.map((post, i) => (
-              <Link key={post.id} href={`/post/${post.id}`} className="group shrink-0 w-[220px] sm:w-[260px] rounded-[22px] overflow-hidden border border-white/5 hover:border-white/15 transition-all duration-300 bg-[#0c0c0c] cursor-pointer flex flex-col">
-                <div className="w-full relative overflow-hidden bg-[#111]" style={{ aspectRatio: "16/10" }}>
+              <Link key={post.id} href={`/post/${post.id}`} className="group shrink-0 w-[210px] sm:w-[250px] rounded-2xl overflow-hidden border border-white/[0.05] hover:border-white/[0.12] transition-all duration-300 bg-[#0a0a0a] cursor-pointer flex flex-col">
+                <div className="w-full relative overflow-hidden bg-[#0e0e0e]" style={{ aspectRatio: "16/10" }}>
                   <div className="absolute top-2.5 left-2.5 z-10">
-                    <span className="bg-[#1d9bf0] text-white text-[9px] font-black px-2 py-0.5 rounded-full">#{i+1} Most Read</span>
+                    <span className="bg-[#1d9bf0] text-white text-[9px] font-bold px-2.5 py-1 rounded-full tracking-[0.08em] uppercase">#{i+1}</span>
                   </div>
                   {getPostImg(post) && <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />}
                 </div>
                 <div className="p-4 flex flex-col flex-1">
-                  {post.category && <span className="text-[#ccff00] text-[9px] font-black uppercase tracking-wider mb-1.5">{post.category}</span>}
-                  <h3 className="text-white font-bold text-[13px] leading-tight mb-3 group-hover:text-[#ccff00] transition-colors line-clamp-2 flex-1">{post.title}</h3>
-                  <div className="flex items-center gap-2 text-white/40 text-[10px] font-semibold">
+                  {post.category && <span className="text-[#ccff00] text-[9px] font-bold uppercase tracking-[0.14em] mb-1.5">{post.category}</span>}
+                  <h3 className="text-white font-semibold text-[12px] leading-tight mb-3 group-hover:text-[#ccff00] transition-colors duration-200 line-clamp-2 flex-1">{post.title}</h3>
+                  <div className="flex items-center gap-2 text-white/25 text-[10px] font-medium">
                     <span className="flex items-center gap-0.5"><Eye className="w-2.5 h-2.5" />{fmtNum(post.viewsCount||0)}</span>
                     <span className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-[#ff4500]" />{fmtNum(post.reactionsCount||0)}</span>
-                    <span className="ml-auto text-white/25">{timeAgo(post.createdAt)}</span>
+                    <span className="ml-auto text-white/20">{timeAgo(post.createdAt)}</span>
                   </div>
                 </div>
               </Link>
@@ -574,44 +570,44 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ── MORE STORIES (numbered list) ── */}
+      {/* ── MORE STORIES ── */}
       {listPosts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-1 h-6 bg-[#a855f7] rounded-full" />
-              <h2 className="text-white font-black text-[20px] sm:text-[24px] tracking-tight">More Stories</h2>
+              <div className="w-[3px] h-5 bg-[#a855f7] rounded-full" />
+              <h2 className="text-white font-bold text-[18px] sm:text-[20px] tracking-tight">More Stories</h2>
             </div>
-            <Link href="/feed" className="text-white/40 hover:text-[#ccff00] text-[12px] font-bold flex items-center gap-1 transition-colors">
-              View feed <ChevronRight className="w-4 h-4" />
+            <Link href="/feed" className="text-white/30 hover:text-[#ccff00] text-[12px] font-medium flex items-center gap-1 transition-colors">
+              View feed <ChevronRight className="w-3.5 h-3.5" />
             </Link>
           </div>
           <div className="flex flex-col divide-y divide-white/[0.04]">
             {listPosts.map((post, i) => (
-              <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 py-4 hover:bg-white/[0.015] rounded-2xl px-3 -mx-3 transition-colors cursor-pointer items-center">
-                <span className="text-[14px] font-black text-white/15 w-6 shrink-0 text-right tabular-nums">{i+1}</span>
-                <div className="w-[80px] sm:w-[100px] h-[62px] sm:h-[74px] rounded-[12px] overflow-hidden shrink-0 relative bg-[#111]">
+              <Link key={post.id} href={`/post/${post.id}`} className="group flex gap-4 py-4 hover:bg-white/[0.012] rounded-xl px-3 -mx-3 transition-colors cursor-pointer items-center">
+                <span className="text-[13px] font-bold text-white/10 w-5 shrink-0 text-right tabular-nums">{i+1}</span>
+                <div className="w-[80px] sm:w-[96px] h-[60px] sm:h-[72px] rounded-xl overflow-hidden shrink-0 relative bg-[#0e0e0e]">
                   {getPostImg(post) && <img src={getPostImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
                 </div>
                 <div className="flex flex-col flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    {post.category && <span className="text-[#ccff00] text-[10px] font-black uppercase tracking-wider">{post.category}</span>}
-                    <span className="text-white/25 text-[10px]">•</span>
-                    <span className="text-white/30 text-[10px] font-semibold">{timeAgo(post.createdAt)}</span>
+                    {post.category && <span className="text-[#ccff00] text-[9px] font-bold uppercase tracking-[0.12em]">{post.category}</span>}
+                    <span className="text-white/20 text-[10px]">·</span>
+                    <span className="text-white/20 text-[10px] font-medium">{timeAgo(post.createdAt)}</span>
                   </div>
-                  <h3 className="text-white font-bold text-[14px] sm:text-[15px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors line-clamp-2">{post.title}</h3>
-                  <div className="flex items-center gap-3 text-white/40 text-[11px] font-semibold">
+                  <h3 className="text-white font-semibold text-[13px] sm:text-[14px] leading-tight mb-2 group-hover:text-[#ccff00] transition-colors duration-200 line-clamp-2">{post.title}</h3>
+                  <div className="flex items-center gap-3 text-white/25 text-[10px] font-medium">
                     <span className="flex items-center gap-1"><Eye className="w-3 h-3" />{fmtNum(post.viewsCount||0)}</span>
                     <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-[#ff4500]" />{fmtNum(post.reactionsCount||0)}</span>
                     <span className="flex items-center gap-1"><MessageCircle className="w-3 h-3" />{post.commentsCount||0}</span>
                   </div>
                 </div>
-                <ArrowUpRight className="w-4 h-4 text-white/10 group-hover:text-[#ccff00] transition-colors shrink-0" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-[#ccff00]/50 transition-colors shrink-0" />
               </Link>
             ))}
           </div>
 
-          <Link href="/feed" className="mt-5 flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl border border-white/8 text-white/50 font-bold text-[13px] hover:border-[#ccff00]/25 hover:text-[#ccff00] transition-all">
+          <Link href="/feed" className="mt-6 flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border border-white/[0.07] text-white/40 font-medium text-[13px] hover:border-white/[0.14] hover:text-white/70 transition-all">
             Load more stories <ArrowRight className="w-4 h-4" />
           </Link>
         </section>
@@ -619,41 +615,43 @@ export default function HomePage() {
 
       {/* ── MANIFESTO ── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        <div className="relative rounded-[32px] overflow-hidden bg-[#0a0a0a] border border-white/5 p-8 sm:p-12">
-          <div className="absolute top-0 right-0 w-[350px] h-[350px] bg-[#ccff00]/5 rounded-full blur-[90px] pointer-events-none" />
-          <div className="absolute -bottom-10 -left-10 w-[250px] h-[250px] bg-[#ccff00]/4 rounded-full blur-[70px] pointer-events-none" />
+        <div className="relative rounded-3xl overflow-hidden bg-[#080808] border border-white/[0.05] p-8 sm:p-12">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#ccff00]/[0.04] rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute -bottom-10 -left-10 w-[300px] h-[300px] bg-[#ccff00]/[0.03] rounded-full blur-[80px] pointer-events-none" />
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/20 mb-6">
-                <Megaphone className="w-3.5 h-3.5 text-[#ccff00]" />
-                <span className="text-[#ccff00] text-[10px] font-black uppercase tracking-widest">Who We Are</span>
+              <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#ccff00]/[0.07] border border-[#ccff00]/[0.12] mb-7">
+                <Megaphone className="w-3.5 h-3.5 text-[#ccff00]" strokeWidth={1.75} />
+                <span className="text-[#ccff00] text-[10px] font-semibold uppercase tracking-[0.18em]">Who We Are</span>
               </div>
-              <h2 className="text-[32px] sm:text-[44px] font-black text-white tracking-tight leading-[1.05] mb-6">
+              <h2 className="text-[30px] sm:text-[42px] font-black text-white tracking-tight leading-[1.07] mb-6">
                 We speak for the<br /><span className="text-[#ccff00]">unheard voices.</span>
               </h2>
-              <p className="text-white/55 text-[15px] leading-relaxed mb-4 font-medium">
+              <p className="text-white/45 text-[14px] sm:text-[15px] leading-[1.8] mb-4 font-normal">
                 CJP Media is the official media wing of the Cockroach Janta Party — the party that thrives when others try to exterminate it. We bring unfiltered political satire, raw roasts, and news the mainstream refuses to print.
               </p>
-              <p className="text-white/55 text-[15px] leading-relaxed mb-8 font-medium">
+              <p className="text-white/45 text-[14px] sm:text-[15px] leading-[1.8] mb-9 font-normal">
                 Because the cockroach always survives. And so does the truth.
               </p>
-              <Link href="/feed" className="inline-flex items-center gap-2 px-6 py-3 bg-[#ccff00] text-black font-extrabold text-[14px] rounded-full hover:bg-[#bbe600] transition-all">
+              <Link href="/feed" className="inline-flex items-center gap-2 px-6 py-3 bg-[#ccff00] text-black font-bold text-[13px] rounded-full hover:bg-white transition-all duration-200">
                 Read Our Stories <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: "Satire & Roasts",   desc: "We roast the powerful so the powerless can laugh.",  emoji: "🔥" },
-                { label: "Unfiltered News",    desc: "Stories mainstream media buries deep.",              emoji: "📰" },
-                { label: "Youth Voice",        desc: "Platform for India's unemployed, ignored youth.",    emoji: "✊" },
-                { label: "Political Satire",   desc: "Holding power accountable through humour.",         emoji: "🏛️" },
-              ].map(({ label, desc, emoji }) => (
-                <div key={label} className="bg-white/[0.03] border border-white/5 rounded-[18px] p-4 flex flex-col gap-2 hover:bg-white/[0.05] transition-colors">
-                  <span className="text-[22px] leading-none">{emoji}</span>
-                  <h4 className="text-white font-bold text-[13px] leading-tight">{label}</h4>
-                  <p className="text-white/45 text-[12px] leading-relaxed">{desc}</p>
+                { label: "Satire & Roasts",   desc: "We roast the powerful so the powerless can laugh.",  Icon: Mic2 },
+                { label: "Unfiltered News",    desc: "Stories mainstream media buries deep.",              Icon: Newspaper },
+                { label: "Youth Voice",        desc: "Platform for India's unemployed, ignored youth.",    Icon: Megaphone },
+                { label: "Political Satire",   desc: "Holding power accountable through humour.",         Icon: Swords },
+              ].map(({ label, desc, Icon }) => (
+                <div key={label} className="bg-white/[0.025] border border-white/[0.05] rounded-2xl p-4 flex flex-col gap-3 hover:bg-white/[0.04] transition-colors duration-200">
+                  <div className="w-7 h-7 rounded-lg bg-[#ccff00]/[0.08] flex items-center justify-center border border-[#ccff00]/[0.1]">
+                    <Icon className="w-3.5 h-3.5 text-[#ccff00]/70" strokeWidth={1.75} />
+                  </div>
+                  <h4 className="text-white font-semibold text-[12px] leading-tight">{label}</h4>
+                  <p className="text-white/35 text-[11px] leading-relaxed">{desc}</p>
                 </div>
               ))}
             </div>
@@ -661,20 +659,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── JOIN CTA STRIP ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 w-full">
-        <div className="bg-[#ccff00] rounded-[28px] p-7 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      {/* ── CTA STRIP ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 w-full">
+        <div className="bg-[#ccff00] rounded-2xl p-7 sm:p-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
-            <h3 className="text-black font-black text-[26px] sm:text-[32px] tracking-[-1px] leading-tight mb-1">Stay Unfiltered.</h3>
-            <p className="text-black/65 text-[15px] font-semibold">Join 12.7K+ supporters. Real stories. No corporate filter.</p>
+            <h3 className="text-black font-black text-[24px] sm:text-[30px] tracking-tight leading-tight mb-1.5">Stay Unfiltered.</h3>
+            <p className="text-black/55 text-[14px] font-normal">Join 12.7K+ supporters. Real stories. No corporate filter.</p>
           </div>
-          <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full sm:w-auto shrink-0">
-            <Link href="/feed" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-black text-white font-extrabold text-[14px] rounded-full hover:bg-[#111] transition-all whitespace-nowrap shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
-              <Flame className="w-4 h-4 text-[#ccff00]" strokeWidth={3} />
+          <div className="flex flex-col sm:flex-row items-stretch gap-2.5 w-full sm:w-auto shrink-0">
+            <Link href="/feed" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-black text-white font-bold text-[13px] rounded-full hover:bg-[#111] transition-all whitespace-nowrap">
+              <Flame className="w-3.5 h-3.5 text-[#ccff00]" strokeWidth={2.5} />
               Enter the Feed
             </Link>
-            <Link href="/category/Trending" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-black/10 border border-black/20 text-black font-extrabold text-[14px] rounded-full hover:bg-black/20 transition-all whitespace-nowrap">
-              <TrendingUp className="w-4 h-4" />
+            <Link href="/category/Trending" className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-black/10 border border-black/15 text-black/80 font-bold text-[13px] rounded-full hover:bg-black/20 transition-all whitespace-nowrap">
+              <TrendingUp className="w-3.5 h-3.5" />
               What's Trending
             </Link>
           </div>
