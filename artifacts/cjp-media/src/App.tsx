@@ -1,16 +1,27 @@
+import { lazy, Suspense } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { Toaster } from "sonner";
-import HomePage from "./pages/HomePage";
-import FeedPage from "./pages/FeedPage";
-import PostPage from "./pages/PostPage";
-import CategoryPage from "./pages/CategoryPage";
-import AdminPage from "./pages/AdminPage";
-import ProfilePage from "./pages/ProfilePage";
-import DashboardPage from "./pages/DashboardPage";
-import MessagesPage from "./pages/MessagesPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import AdminPostPage from "./pages/AdminPostPage";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const FeedPage = lazy(() => import("./pages/FeedPage"));
+const PostPage = lazy(() => import("./pages/PostPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const AdminPage = lazy(() => import("./pages/AdminPage"));
+const AdminPostPage = lazy(() => import("./pages/AdminPostPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const DashboardPage = lazy(() => import("./pages/DashboardPage"));
+const MessagesPage = lazy(() => import("./pages/MessagesPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-[#ccff00] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function Router() {
   return (
@@ -35,7 +46,11 @@ export default function App() {
     <div className="dark">
       <Toaster position="bottom-center" theme="dark" richColors />
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-        <Router />
+        <ErrorBoundary>
+          <Suspense fallback={<PageLoader />}>
+            <Router />
+          </Suspense>
+        </ErrorBoundary>
       </WouterRouter>
     </div>
   );

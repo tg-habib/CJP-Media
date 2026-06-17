@@ -1,5 +1,3 @@
-"use client";
-
 import { Link, useLocation } from 'wouter';
 
 import { useAuthState } from 'react-firebase-hooks/auth';

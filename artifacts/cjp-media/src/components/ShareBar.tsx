@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from 'react';
 import { Share2, Check, Twitter, Facebook, Linkedin, Link as LinkIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';

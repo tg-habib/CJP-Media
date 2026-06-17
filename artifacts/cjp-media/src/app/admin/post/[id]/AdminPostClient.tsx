@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useLocation } from 'wouter';
 import { auth, db } from '@/firebase';

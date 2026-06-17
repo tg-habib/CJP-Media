@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { Helmet } from "react-helmet-async";
 import { collection, query, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { Flame, ArrowRight, TrendingUp, Newspaper, Users, Eye, Heart, ChevronRight, Megaphone } from "lucide-react";
@@ -7,6 +8,7 @@ import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
 import Footer from "../components/Footer";
 import VerifiedBadge from "../components/VerifiedBadge";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 export default function HomePage() {
   const [trendingPosts, setTrendingPosts] = useState<any[]>([]);
@@ -40,6 +42,14 @@ export default function HomePage() {
   }, []);
 
   return (
+    <>
+    <Helmet>
+      <title>CJP Media — Voice of the Real Majority</title>
+      <meta name="description" content="The official media wing of the Cockroach Janta Party. Unfiltered political satire, roasts, and news." />
+      <meta property="og:title" content="CJP Media — Voice of the Real Majority" />
+      <meta property="og:description" content="The official media wing of the Cockroach Janta Party. Unfiltered political satire, roasts, and news." />
+      <meta property="og:image" content="/opengraph.jpg" />
+    </Helmet>
     <div className="flex flex-col relative overflow-hidden bg-[#050505] min-h-screen pb-20 sm:pb-0">
       {/* Hero background */}
       {(profileSettings?.heroUrl || profileSettings?.mobileHeroUrl) ? (
@@ -271,5 +281,6 @@ export default function HomePage() {
       <Footer settings={profileSettings} />
       <BottomNav />
     </div>
+    </>
   );
 }

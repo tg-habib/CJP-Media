@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent } from "../../components/ui/card";
 import { User, FileText, MessageSquare, Heart, Eye, Menu, Bell, Calendar as CalendarIcon, ChevronDown, ArrowUp, Home, Users, BarChart2, MoreHorizontal } from 'lucide-react';
 

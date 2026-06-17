@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, ChangeEvent } from 'react';
 import { Camera, X, ArrowLeft } from 'lucide-react';
 

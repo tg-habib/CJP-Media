@@ -1,7 +1,6 @@
-"use client";
-
 import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
+import { Helmet } from 'react-helmet-async';
 import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
 import { db, auth, loginWithGoogle } from '../../../firebase';
 import { ArrowLeft, MoreVertical, MessageCircle, Share2, Bookmark, Flame, Globe, Check } from 'lucide-react';
@@ -166,7 +165,23 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
      } catch (e) {}
   }
 
+  const ogImage = images[0] || '/opengraph.jpg';
+  const postUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/post/${id}`;
+
   return (
+    <>
+    <Helmet>
+      <title>{post?.title ? `${post.title} — CJP Media` : 'CJP Media'}</title>
+      <meta name="description" content={post?.roast?.slice(0, 160) || 'Read this post on CJP Media — Voice of the Real Majority.'} />
+      <meta property="og:title" content={post?.title || 'CJP Media'} />
+      <meta property="og:description" content={post?.roast?.slice(0, 160) || 'Read this post on CJP Media.'} />
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:url" content={postUrl} />
+      <meta property="og:type" content="article" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={post?.title || 'CJP Media'} />
+      <meta name="twitter:image" content={ogImage} />
+    </Helmet>
     <div className="flex justify-center min-h-screen bg-[#0a0a0a]">
       <div className="w-full max-w-[1240px] flex justify-center lg:justify-between gap-0 lg:gap-8 px-0 lg:px-4">
         
@@ -428,6 +443,7 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
 
       </div>
     </div>
+    </>
   );
 }
 

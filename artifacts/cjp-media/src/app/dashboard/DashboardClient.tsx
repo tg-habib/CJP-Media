@@ -1,5 +1,3 @@
-"use client";
-
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../../firebase';
 import { useLocation } from 'wouter';

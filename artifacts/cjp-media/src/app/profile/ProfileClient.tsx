@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { ArrowLeft, Bell, MoreVertical, MapPin, Globe, Calendar, Mail, UserPlus, Eye, Heart, MessageCircle, ArrowRight, Flame } from 'lucide-react';
