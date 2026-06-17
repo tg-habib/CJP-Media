@@ -1,36 +1,59 @@
-import { useEffect } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
-import { useLocation, Link } from 'wouter';
-import { ArrowLeft, Bell } from 'lucide-react';
+import { ArrowLeft, Bell, RefreshCw } from 'lucide-react';
+import AuthGate from '../components/AuthGate';
+import BottomNav from '../components/BottomNav';
 
 export default function NotificationsPage() {
   const [user, loading] = useAuthState(auth);
-  const [, navigate] = useLocation();
 
-  useEffect(() => {
-    if (!loading && !user) navigate('/');
-  }, [user, loading, navigate]);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center">
+        <RefreshCw className="w-7 h-7 animate-spin text-[#ccff00]" />
+      </div>
+    );
+  }
 
-  if (loading || !user) return null;
+  if (!user) {
+    return (
+      <>
+        <AuthGate
+          title="Your Notifications"
+          message="Sign in to see likes, comments, and activity on your posts."
+        />
+        <BottomNav />
+      </>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#050505] pb-24">
-      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 px-4 py-4 flex items-center gap-3">
-        <Link href="/" className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
-          <ArrowLeft className="w-6 h-6 text-white" />
-        </Link>
-        <h1 className="text-xl font-bold text-white tracking-tight">Notifications</h1>
+    <div className="min-h-screen bg-[#050505] pb-28 sm:pb-10">
+      <div className="sticky top-0 z-50 bg-[#050505]/95 backdrop-blur-xl border-b border-white/[0.06] px-4 py-3 flex items-center gap-3">
+        <button
+          onClick={() => window.history.back()}
+          className="p-2 -ml-2 rounded-full hover:bg-white/10 active:bg-white/15 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </button>
+        <h1 className="text-white font-bold text-lg tracking-tight">Notifications</h1>
       </div>
-      <div className="max-w-2xl mx-auto px-4 py-6 flex flex-col gap-4">
-        <div className="bg-[#121212]/80 border border-white/5 rounded-[24px] p-8 flex flex-col items-center justify-center text-center gap-4 mt-8">
-          <div className="w-16 h-16 rounded-full bg-[#ccff00]/10 flex items-center justify-center">
-            <Bell className="w-8 h-8 text-[#ccff00]" />
+
+      <div className="max-w-2xl mx-auto px-4 py-4">
+        <div className="bg-[#111111] border border-white/[0.06] rounded-[24px] p-10 flex flex-col items-center justify-center text-center gap-4 mt-4">
+          <div className="w-16 h-16 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/10 flex items-center justify-center">
+            <Bell className="w-7 h-7 text-[#ccff00]" />
           </div>
-          <h2 className="text-xl font-bold text-white">All caught up!</h2>
-          <p className="text-white/50 text-sm max-w-sm font-medium">You don't have any new notifications right now. Check back later for updates, likes, and comments on your activity.</p>
+          <div>
+            <h2 className="text-lg font-bold text-white mb-1">All caught up!</h2>
+            <p className="text-white/40 text-sm max-w-xs font-medium leading-relaxed">
+              You don't have any new notifications. Check back later for likes, comments, and updates.
+            </p>
+          </div>
         </div>
       </div>
+
+      <BottomNav />
     </div>
   );
 }

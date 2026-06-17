@@ -1,45 +1,52 @@
 import { Link, useLocation } from 'wouter';
-
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from '../firebase';
-import { Home, Compass, Plus, MessageSquare, User } from 'lucide-react';
+import { Home, Flame, Bell, MessageSquare, User } from 'lucide-react';
+
+const tabs = [
+  { href: '/', icon: Home, label: 'Home' },
+  { href: '/feed', icon: Flame, label: 'Feed' },
+  { href: '/notifications', icon: Bell, label: 'Alerts' },
+  { href: '/messages', icon: MessageSquare, label: 'Messages' },
+  { href: '/dashboard', icon: User, label: 'Profile' },
+];
 
 export default function BottomNav() {
   const [pathname] = useLocation();
   const [user] = useAuthState(auth);
-  
-  if (pathname?.startsWith('/post/') || pathname?.startsWith('/admin')) return null;
 
-  const isAdmin = user?.email === 'tgff28970@gmail.com';
+  if (
+    pathname?.startsWith('/post/') ||
+    pathname?.startsWith('/admin')
+  ) return null;
 
   return (
-    <div className="fixed sm:hidden bottom-4 left-4 right-4 z-50">
-      <div className="flex items-center justify-around bg-[#121212]/90 backdrop-blur-2xl border border-white/10 rounded-full px-2 py-2 shadow-2xl">
-        <Link href="/" className="flex items-center justify-center p-3 rounded-full hover:bg-white/5 hover:text-[#ccff00] transition-colors">
-          <Home className={`w-[24px] h-[24px] ${pathname === '/' ? 'text-[#ccff00]' : 'text-white/60'}`} />
-        </Link>
-        <Link href="/feed" className="flex items-center justify-center p-3 rounded-full hover:bg-white/5 hover:text-[#ccff00] transition-colors">
-          <Compass className={`w-[24px] h-[24px] ${pathname === '/feed' ? 'text-[#ccff00]' : 'text-white/60'}`} />
-        </Link>
+    <div className="fixed sm:hidden bottom-3 left-3 right-3 z-50">
+      <div className="flex items-center justify-around bg-[#111111]/95 backdrop-blur-2xl border border-white/[0.08] rounded-[28px] px-1 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.6)]">
+        {tabs.map(({ href, icon: Icon, label }) => {
+          const isActive = href === '/' ? pathname === '/' : pathname?.startsWith(href);
+          return (
+            <Link
+              key={href}
+              href={href}
+              className="relative flex flex-col items-center justify-center gap-0.5 flex-1 py-1.5 rounded-[20px] transition-all"
+            >
+              <div className={`flex items-center justify-center w-10 h-8 rounded-2xl transition-all duration-200 ${isActive ? 'bg-[#ccff00]/15' : 'hover:bg-white/5'}`}>
+                <Icon
+                  className={`w-[22px] h-[22px] transition-colors duration-200 ${isActive ? 'text-[#ccff00]' : 'text-white/40'}`}
+                  strokeWidth={isActive ? 2.5 : 2}
+                />
+              </div>
+              <span className={`text-[10px] font-semibold tracking-tight transition-colors duration-200 ${isActive ? 'text-[#ccff00]' : 'text-white/30'}`}>
+                {label}
+              </span>
 
-        {isAdmin && (
-          <Link href="/admin" className="flex items-center justify-center p-3 rounded-full hover:bg-white/5 transition-colors">
-             <Plus className="w-[24px] h-[24px] text-white/60 hover:text-white" />
-          </Link>
-        )}
-
-        <Link 
-          href="/messages"
-          className="flex items-center justify-center p-3 rounded-full hover:bg-white/5 hover:text-white transition-colors"
-        >
-          <MessageSquare className={`w-[24px] h-[24px] ${pathname === '/messages' ? 'text-[#ccff00]' : 'text-white/60'}`} />
-        </Link>
-        <Link 
-          href="/dashboard" 
-          className="flex items-center justify-center p-3 rounded-full hover:bg-white/5 hover:text-[#ccff00] transition-colors"
-        >
-          <User className={`w-[24px] h-[24px] ${pathname === '/dashboard' ? 'text-[#ccff00]' : 'text-white/60'}`} />
-        </Link>
+              {href === '/notifications' && user && (
+                <span className="absolute top-1 right-[calc(50%-18px)] w-1.5 h-1.5 bg-[#ccff00] rounded-full shadow-[0_0_6px_rgba(204,255,0,0.8)]" />
+              )}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

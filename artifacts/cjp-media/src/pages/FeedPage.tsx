@@ -67,8 +67,13 @@ export default function FeedPage() {
 
             {/* Main Feed */}
             <div className="w-full max-w-xl mx-auto lg:mx-0 shrink-0 border-x border-transparent lg:border-white/5 min-h-screen">
-              <div className="sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-md z-50 flex items-center justify-between px-4 h-14 border-b border-white/5">
-                <h1 className="text-white font-bold text-lg">For You</h1>
+              <div
+                className="sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-md z-50 border-b border-white/5"
+                style={{ paddingTop: 'env(safe-area-inset-top)' }}
+              >
+                <div className="flex items-center justify-between px-4 h-14">
+                  <h1 className="text-white font-bold text-lg">For You</h1>
+                </div>
               </div>
 
               <ErrorBoundary>

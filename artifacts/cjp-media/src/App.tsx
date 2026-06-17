@@ -1,7 +1,15 @@
-import { lazy, Suspense } from "react";
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { lazy, Suspense, useEffect } from "react";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+
+function ScrollRestorer() {
+  const [pathname] = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [pathname]);
+  return null;
+}
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const FeedPage = lazy(() => import("./pages/FeedPage"));
@@ -25,7 +33,9 @@ function PageLoader() {
 
 function Router() {
   return (
-    <Switch>
+    <>
+      <ScrollRestorer />
+      <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/feed" component={FeedPage} />
       <Route path="/post/:id" component={PostPage} />
@@ -38,6 +48,7 @@ function Router() {
       <Route path="/notifications" component={NotificationsPage} />
       <Route component={NotFoundPage} />
     </Switch>
+    </>
   );
 }
 
