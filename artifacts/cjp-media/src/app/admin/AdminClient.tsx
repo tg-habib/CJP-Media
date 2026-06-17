@@ -189,7 +189,7 @@ export default function Admin() {
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
     if (!isAdmin || !user) return;
-    if (!title || !roast || imageUrls.length === 0) return toast.error('Fill required fields and add at least one image');
+    if (!title || !roast || imageUrls.length === 0) { toast.error('Fill required fields and add at least one image'); return; }
     
     setIsSubmitting(true);
     try {

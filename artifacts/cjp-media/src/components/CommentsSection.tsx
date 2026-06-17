@@ -25,7 +25,7 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
   }, [postId]);
 
   const handlePostComment = async (): Promise<void> => {
-    if (!user) loginWithGoogle(); return;
+    if (!user) { loginWithGoogle(); return; }
     if (!postId || !newComment.trim()) return;
     try {
       await addDoc(collection(db, `posts/${postId}/comments`), {
