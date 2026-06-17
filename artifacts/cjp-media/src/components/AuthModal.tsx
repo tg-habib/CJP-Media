@@ -8,6 +8,7 @@ interface AuthModalProps {
   open: boolean;
   onClose: () => void;
   defaultView?: View;
+  onSignupSuccess?: () => void;
 }
 
 function GoogleIcon() {
@@ -61,7 +62,7 @@ function InputField({
   );
 }
 
-export default function AuthModal({ open, onClose, defaultView = 'signin' }: AuthModalProps) {
+export default function AuthModal({ open, onClose, defaultView = 'signin', onSignupSuccess }: AuthModalProps) {
   const [view, setView] = useState<View>(defaultView);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -122,7 +123,11 @@ export default function AuthModal({ open, onClose, defaultView = 'signin' }: Aut
     setLoading(true); setError(''); setFieldErrors({});
     const res = await registerWithEmail(name.trim(), email.trim(), password);
     setLoading(false);
-    if (res.success) { handleClose(); return; }
+    if (res.success) {
+      handleClose();
+      onSignupSuccess?.();
+      return;
+    }
     if (res.error) setError(res.error);
   };
 

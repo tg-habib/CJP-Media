@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { Helmet } from 'react-helmet-async';
-import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, deleteDoc, updateDoc, increment, serverTimestamp, collection, query, where, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db, auth, loginWithGoogle, toggleBookmark } from '../../../firebase';
 import { ArrowLeft, MoreVertical, MessageCircle, Share2, Bookmark, Flame, Globe, Check, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -25,6 +25,7 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
   const [hasLiked, setHasLiked] = useState(false);
   const [localReactionsCount, setLocalReactionsCount] = useState(post?.reactionsCount || 0);
   const [copied, setCopied] = useState(false);
+  const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
 
   const pName = profile?.name || 'CJP Media';
   const pAvatarUrl = profile?.avatarUrl;
@@ -67,6 +68,27 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
     });
     return () => unsub();
   }, [user, id]);
+
+  useEffect(() => {
+    if (!post?.category || !id) return;
+    const fetchRelated = async () => {
+      try {
+        const q = query(
+          collection(db, 'posts'),
+          where('category', '==', post.category),
+          orderBy('createdAt', 'desc'),
+          limit(5)
+        );
+        const snap = await getDocs(q);
+        const related = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .filter(p => p.id !== id)
+          .slice(0, 4);
+        setRelatedPosts(related);
+      } catch {}
+    };
+    fetchRelated();
+  }, [post?.category, id]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const scrollLeft = e.currentTarget.scrollLeft;
@@ -114,18 +136,24 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
     const reactionRef = doc(db, `posts/${id}/reactions`, user.uid);
     const postRef = doc(db, `posts/${id}`);
     
+    const userLikeRef = doc(db, `users/${user.uid}/likes`, id);
     try {
       if (hasLiked) {
         setHasLiked(false);
         setLocalReactionsCount((prev: number) => Math.max(0, prev - 1));
         await deleteDoc(reactionRef);
+        await deleteDoc(userLikeRef);
         await updateDoc(postRef, { reactionsCount: increment(-1) });
       } else {
         setHasLiked(true);
         setLocalReactionsCount((prev: number) => prev + 1);
-        await setDoc(reactionRef, {
-          userId: user.uid,
-          createdAt: serverTimestamp()
+        await setDoc(reactionRef, { userId: user.uid, createdAt: serverTimestamp() });
+        await setDoc(userLikeRef, {
+          postId: id,
+          title: post.title || '',
+          imageUrl: post.imageUrls?.[0] || post.imageUrl || post.image || '',
+          category: post.category || '',
+          likedAt: serverTimestamp(),
         });
         await updateDoc(postRef, { reactionsCount: increment(1) });
       }
@@ -409,6 +437,28 @@ export default function PostViewClient({ id, initialPost, profile }: { id: strin
              {isFollowing ? 'Following' : 'Follow'}
            </button>
         </div>
+
+        {/* Related Posts */}
+        {relatedPosts.length > 0 && (
+          <div className="px-4 py-5 border-b border-white/5">
+            <h3 className="text-white font-bold text-[16px] mb-4">More like this</h3>
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1">
+              {relatedPosts.map(rp => (
+                <Link key={rp.id} href={`/post/${rp.id}`} className="shrink-0 w-[148px] group">
+                  <div className="w-[148px] h-[148px] rounded-xl overflow-hidden bg-[#1a1a1a] border border-white/5 mb-2">
+                    <img
+                      src={rp.imageUrls?.[0] || rp.image || rp.imageUrl || `https://picsum.photos/seed/${rp.id}/296/296`}
+                      alt={rp.title}
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <p className="text-white/80 text-[12px] font-semibold line-clamp-2 leading-snug group-hover:text-[#ccff00] transition-colors">{rp.title}</p>
+                  <p className="text-white/30 text-[11px] mt-0.5 uppercase font-bold tracking-wide">{rp.category}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Real Comments Wrapper */}
         <div className="px-4 pt-2">

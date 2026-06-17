@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { MoreVertical, ThumbsUp, ChevronDown, Smile, Image as ImageIcon } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'wouter';
 
 export default function CommentsSection({ postId, initialCommentsCount }: { postId: string, initialCommentsCount?: number }) {
   const [user] = useAuthState(auth);
@@ -80,7 +81,9 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
                   <div className="flex justify-between items-start w-full">
                      <div className="flex flex-col gap-1.5 w-full">
                         <div className="flex items-center gap-2">
-                           <span className="font-bold text-[14px] text-white/90">{comment.userName}</span>
+                           <Link href={`/user/${comment.userId}`} className="font-bold text-[14px] text-white/90 hover:text-[#ccff00] transition-colors">
+                             {comment.userName}
+                           </Link>
                            <span className="text-[13px] text-white/40">{timeAgo}</span>
                         </div>
                         <p className="text-[14px] text-white/80 leading-snug">{comment.text}</p>

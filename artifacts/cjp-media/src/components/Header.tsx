@@ -6,12 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Flame, Search, Bell } from 'lucide-react';
 import SearchDialog from './SearchDialog';
 import AuthModal from './AuthModal';
+import ProfileSetupModal from './ProfileSetupModal';
 
 export default function Header({ settings }: { settings?: any }) {
   const [user, loading] = useAuthState(auth);
   const [pathname] = useLocation();
   const [mounted, setMounted] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
+  const [profileSetupOpen, setProfileSetupOpen] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -68,7 +70,12 @@ export default function Header({ settings }: { settings?: any }) {
         </div>
       </header>
 
-      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onSignupSuccess={() => setProfileSetupOpen(true)}
+      />
+      <ProfileSetupModal open={profileSetupOpen} onClose={() => setProfileSetupOpen(false)} />
     </>
   );
 }

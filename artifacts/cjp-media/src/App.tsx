@@ -22,6 +22,7 @@ const DashboardPage = lazy(() => import("./pages/DashboardPage"));
 const MessagesPage = lazy(() => import("./pages/MessagesPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
 
 function PageLoader() {
   return (
@@ -46,6 +47,7 @@ function Router() {
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/messages" component={MessagesPage} />
       <Route path="/notifications" component={NotificationsPage} />
+      <Route path="/user/:uid" component={UserProfilePage} />
       <Route component={NotFoundPage} />
     </Switch>
     </>

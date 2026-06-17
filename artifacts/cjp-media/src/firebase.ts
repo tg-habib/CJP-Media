@@ -10,7 +10,7 @@ import {
   updateProfile,
   AuthError,
 } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import firebaseConfig from './firebase-applet-config.json';
 
 const app = initializeApp(firebaseConfig);
@@ -50,11 +50,45 @@ export const ensureAdmin = async (uid: string, email: string) => {
   }
 };
 
+export const saveUserProfile = async (uid: string, data: {
+  displayName?: string;
+  bio?: string;
+  avatarUrl?: string;
+}) => {
+  await setDoc(doc(db, 'users', uid), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+};
+
+export const getUserProfile = async (uid: string) => {
+  const snap = await getDoc(doc(db, 'users', uid));
+  return snap.exists() ? { uid, ...snap.data() } : null;
+};
+
+export const getUserBookmarks = async (uid: string) => {
+  const snap = await getDocs(query(collection(db, 'users', uid, 'bookmarks'), orderBy('savedAt', 'desc')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
+export const getUserLikes = async (uid: string) => {
+  const snap = await getDocs(query(collection(db, 'users', uid, 'likes'), orderBy('likedAt', 'desc')));
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+};
+
 export const loginWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     if (res.user) {
       if (res.user.email) await ensureAdmin(res.user.uid, res.user.email);
+      const userRef = doc(db, 'users', res.user.uid);
+      const snap = await getDoc(userRef);
+      if (!snap.exists()) {
+        await setDoc(userRef, {
+          displayName: res.user.displayName || '',
+          email: res.user.email || '',
+          avatarUrl: res.user.photoURL || '',
+          bio: '',
+          createdAt: serverTimestamp(),
+        });
+      }
       return { success: true };
     }
     return { success: false, error: 'No user returned.' };
@@ -81,7 +115,14 @@ export const registerWithEmail = async (name: string, email: string, password: s
     const res = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(res.user, { displayName: name });
     if (res.user?.email) await ensureAdmin(res.user.uid, res.user.email);
-    return { success: true };
+    await setDoc(doc(db, 'users', res.user.uid), {
+      displayName: name,
+      email,
+      avatarUrl: '',
+      bio: '',
+      createdAt: serverTimestamp(),
+    });
+    return { success: true, isNewUser: true };
   } catch (error: any) {
     return { success: false, error: friendlyError(error) };
   }
