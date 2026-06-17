@@ -1,5 +1,15 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+  AuthError,
+} from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import firebaseConfig from './firebase-applet-config.json';
 
@@ -34,26 +44,55 @@ export const getBookmarkStatus = async (uid: string, postId: string) => {
   return snap.exists();
 };
 
+export const ensureAdmin = async (uid: string, email: string) => {
+  if (email === "tgff28970@gmail.com") {
+    await setDoc(doc(db, "admins", uid), { email }, { merge: true });
+  }
+};
+
 export const loginWithGoogle = async () => {
   try {
     const res = await signInWithPopup(auth, googleProvider);
     if (res.user) {
-      if (res.user.email) {
-        await ensureAdmin(res.user.uid, res.user.email);
-      }
-      return true;
+      if (res.user.email) await ensureAdmin(res.user.uid, res.user.email);
+      return { success: true };
     }
-    return false;
+    return { success: false, error: 'No user returned.' };
   } catch (error: any) {
-    if (error?.code !== 'auth/popup-closed-by-user') {
-       console.error("Login failed", error);
-       if (error?.code === 'auth/cancelled-popup-request' || error?.message?.includes('Cross-Origin')) {
-         alert("Please open this app in a new browser tab to sign in, as the preview environment might block login popups.");
-       } else {
-         alert("Login failed: " + error.message);
-       }
+    if (error?.code === 'auth/popup-closed-by-user' || error?.code === 'auth/cancelled-popup-request') {
+      return { success: false, error: null };
     }
-    return false;
+    return { success: false, error: friendlyError(error) };
+  }
+};
+
+export const loginWithEmail = async (email: string, password: string) => {
+  try {
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    if (res.user?.email) await ensureAdmin(res.user.uid, res.user.email);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: friendlyError(error) };
+  }
+};
+
+export const registerWithEmail = async (name: string, email: string, password: string) => {
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(res.user, { displayName: name });
+    if (res.user?.email) await ensureAdmin(res.user.uid, res.user.email);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: friendlyError(error) };
+  }
+};
+
+export const sendPasswordReset = async (email: string) => {
+  try {
+    await sendPasswordResetEmail(auth, email);
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: friendlyError(error) };
   }
 };
 
@@ -61,8 +100,23 @@ export const logout = async () => {
   await signOut(auth);
 };
 
-export const ensureAdmin = async (uid: string, email: string) => {
-  if (email === "tgff28970@gmail.com") {
-    await setDoc(doc(db, "admins", uid), { email }, { merge: true });
+function friendlyError(error: AuthError | any): string {
+  switch (error?.code) {
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'Incorrect email or password.';
+    case 'auth/email-already-in-use':
+      return 'This email is already registered. Try signing in.';
+    case 'auth/weak-password':
+      return 'Password must be at least 6 characters.';
+    case 'auth/invalid-email':
+      return 'Please enter a valid email address.';
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Please wait a moment and try again.';
+    case 'auth/network-request-failed':
+      return 'Network error. Check your connection.';
+    default:
+      return error?.message || 'Something went wrong. Please try again.';
   }
-};
+}
