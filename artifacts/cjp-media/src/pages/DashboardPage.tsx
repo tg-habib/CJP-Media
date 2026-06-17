@@ -3,7 +3,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth, db } from '../firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { Link } from 'wouter';
-import { Bookmark, Heart, LogOut, ChevronRight, Shield, RefreshCw } from 'lucide-react';
+import { Bookmark, Heart, LogOut, ChevronRight, Shield, RefreshCw, Flame } from 'lucide-react';
 import AuthGate from '../components/AuthGate';
 import BottomNav from '../components/BottomNav';
 
@@ -13,14 +13,24 @@ export default function DashboardPage() {
   const [user, loading] = useAuthState(auth);
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [likes, setLikes] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user) return;
-    const q = query(collection(db, 'users', user.uid, 'bookmarks'), orderBy('savedAt', 'desc'));
-    const unsub = onSnapshot(q, (snap) => {
+    const qBookmarks = query(collection(db, 'users', user.uid, 'bookmarks'), orderBy('savedAt', 'desc'));
+    const unsubBookmarks = onSnapshot(qBookmarks, (snap) => {
       setBookmarks(snap.docs.map(d => ({ ...d.data(), id: d.id })));
     });
-    return () => unsub();
+
+    const qLikes = query(collection(db, 'users', user.uid, 'likes'), orderBy('likedAt', 'desc'));
+    const unsubLikes = onSnapshot(qLikes, (snap) => {
+      setLikes(snap.docs.map(d => ({ ...d.data(), id: d.id })));
+    }, () => {});
+
+    return () => {
+      unsubBookmarks();
+      unsubLikes();
+    };
   }, [user]);
 
   if (loading) {
@@ -92,6 +102,13 @@ export default function DashboardPage() {
                   {tab}
                   <span className="ml-1 text-[9px] bg-[#ccff00]/20 text-[#ccff00] px-1 py-0.5 rounded-full">
                     {bookmarks.length}
+                  </span>
+                </span>
+              ) : tab === 'likes' && likes.length > 0 ? (
+                <span>
+                  {tab}
+                  <span className="ml-1 text-[9px] bg-[#ccff00]/20 text-[#ccff00] px-1 py-0.5 rounded-full">
+                    {likes.length}
                   </span>
                 </span>
               ) : tab}
@@ -202,14 +219,57 @@ export default function DashboardPage() {
           )}
 
           {activeTab === 'likes' && (
-            <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-10 flex flex-col items-center gap-4 text-center">
-              <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white/30" />
-              </div>
-              <div>
-                <p className="text-white font-bold mb-1">No liked posts yet</p>
-                <p className="text-white/40 text-sm">Posts you react to will appear here.</p>
-              </div>
+            <div className="space-y-2">
+              {likes.length === 0 ? (
+                <div className="bg-[#111111] border border-white/[0.06] rounded-2xl p-10 flex flex-col items-center gap-4 text-center">
+                  <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
+                    <Flame className="w-6 h-6 text-white/30" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold mb-1">No liked posts yet</p>
+                    <p className="text-white/40 text-sm">Posts you react to will appear here.</p>
+                  </div>
+                  <Link
+                    href="/feed"
+                    className="px-5 py-2.5 bg-[#ccff00] text-black font-bold rounded-full text-sm hover:bg-[#bbe600] transition-colors"
+                  >
+                    Browse Feed
+                  </Link>
+                </div>
+              ) : (
+                likes.map((lk) => (
+                  <Link
+                    key={lk.postId || lk.id}
+                    href={`/post/${lk.postId || lk.id}`}
+                    className="flex gap-3 bg-[#111111] border border-white/[0.06] rounded-2xl p-3 hover:border-white/15 transition-all group active:scale-[0.98]"
+                  >
+                    {lk.imageUrl ? (
+                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-[#0a0a0a]">
+                        <img
+                          src={lk.imageUrl}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-16 h-16 rounded-xl shrink-0 bg-[#1a1a1a] flex items-center justify-center">
+                        <Flame className="w-5 h-5 text-white/20" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                      <p className="text-white font-semibold text-sm line-clamp-2 group-hover:text-[#ccff00] transition-colors leading-snug">
+                        {lk.title}
+                      </p>
+                      {lk.category && (
+                        <span className="text-[11px] text-[#ccff00]/60 font-bold uppercase tracking-wide">
+                          {lk.category}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-white/20 self-center shrink-0 group-hover:text-[#ccff00] transition-colors" />
+                  </Link>
+                ))
+              )}
             </div>
           )}
 

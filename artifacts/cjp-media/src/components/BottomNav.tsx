@@ -41,9 +41,6 @@ export default function BottomNav() {
                 {label}
               </span>
 
-              {href === '/notifications' && user && (
-                <span className="absolute top-1 right-[calc(50%-18px)] w-1.5 h-1.5 bg-[#ccff00] rounded-full shadow-[0_0_6px_rgba(204,255,0,0.8)]" />
-              )}
             </Link>
           );
         })}

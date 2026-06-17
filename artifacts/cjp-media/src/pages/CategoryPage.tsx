@@ -3,17 +3,28 @@ import { Helmet } from "react-helmet-async";
 import { useEffect, useState } from "react";
 import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
-import { ArrowLeft, Flame, Eye, MessageCircle, TrendingUp } from "lucide-react";
+import { ArrowLeft, Flame, MessageCircle, TrendingUp, Landmark, Megaphone, Mic2, Zap, Newspaper, Eye } from "lucide-react";
 import { SkeletonCard } from "../components/SkeletonPost";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import BottomNav from "../components/BottomNav";
 import { formatDistanceToNow } from "date-fns";
 
-const CATEGORY_META: Record<string, { icon: string; description: string; color: string }> = {
-  Trending: { icon: "🔥", description: "The hottest takes everyone's talking about.", color: "#ff6b35" },
-  Politics: { icon: "🗳️", description: "Unfiltered political commentary and satire.", color: "#ccff00" },
-  "Youth Voice": { icon: "📢", description: "Stories, opinions, and voices that matter.", color: "#33ccff" },
-  Roasts: { icon: "🎤", description: "Brutal, honest, funny — the real kind of roast.", color: "#ff3366" },
+const CATEGORY_META: Record<string, {
+  Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  description: string;
+  color: string;
+}> = {
+  Trending:      { Icon: TrendingUp, description: "The hottest takes everyone's talking about.",   color: "#ff6b35" },
+  Politics:      { Icon: Landmark,   description: "Unfiltered political commentary and satire.",   color: "#ccff00" },
+  "Youth Voice": { Icon: Megaphone,  description: "Stories, opinions, and voices that matter.",    color: "#33ccff" },
+  Satire:        { Icon: Mic2,       description: "Brutal, honest, funny — the real kind of roast.", color: "#a855f7" },
+  Roasts:        { Icon: Mic2,       description: "Brutal, honest, funny — the real kind of roast.", color: "#ff3366" },
+  Breaking:      { Icon: Zap,        description: "Latest breaking news and updates.",              color: "#f59e0b" },
+};
+
+const DEFAULT_META = {
+  Icon: Newspaper,
+  color: "#ccff00",
 };
 
 export default function CategoryPage() {
@@ -21,7 +32,9 @@ export default function CategoryPage() {
   const slug = decodeURIComponent(params.slug || "");
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const meta = CATEGORY_META[slug] || { icon: "📰", description: `Browse all posts in ${slug}.`, color: "#ccff00" };
+
+  const meta = CATEGORY_META[slug] || { ...DEFAULT_META, description: `Browse all posts in ${slug}.` };
+  const { Icon, color, description } = meta;
 
   useEffect(() => {
     if (!slug) return;
@@ -46,9 +59,9 @@ export default function CategoryPage() {
     <>
       <Helmet>
         <title>{slug} — CJP Media</title>
-        <meta name="description" content={meta.description} />
+        <meta name="description" content={description} />
         <meta property="og:title" content={`${slug} — CJP Media`} />
-        <meta property="og:description" content={meta.description} />
+        <meta property="og:description" content={description} />
       </Helmet>
 
       <div className="min-h-screen bg-[#050505] pb-28 sm:pb-10">
@@ -68,11 +81,16 @@ export default function CategoryPage() {
         </div>
 
         <div className="max-w-5xl mx-auto px-4">
-          <div className="py-8 flex items-end gap-4 border-b border-white/[0.05] mb-6">
-            <span className="text-4xl">{meta.icon}</span>
+          <div className="py-8 flex items-center gap-4 border-b border-white/[0.05] mb-6">
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+              style={{ backgroundColor: `${color}18`, border: `1px solid ${color}30` }}
+            >
+              <Icon className="w-6 h-6" style={{ color }} strokeWidth={2} />
+            </div>
             <div>
               <h2 className="text-2xl font-black text-white tracking-tight">{slug}</h2>
-              <p className="text-white/40 text-sm mt-0.5">{meta.description}</p>
+              <p className="text-white/40 text-sm mt-0.5">{description}</p>
               {!loading && (
                 <p className="text-white/25 text-xs mt-1 font-medium">
                   {posts.length} {posts.length === 1 ? "post" : "posts"}
@@ -87,8 +105,13 @@ export default function CategoryPage() {
                 {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : posts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center gap-4">
-                <span className="text-5xl">{meta.icon}</span>
+              <div className="flex flex-col items-center justify-center py-24 text-center gap-5">
+                <div
+                  className="w-20 h-20 rounded-[28px] flex items-center justify-center"
+                  style={{ backgroundColor: `${color}12`, border: `1px solid ${color}25` }}
+                >
+                  <Icon className="w-9 h-9" style={{ color }} strokeWidth={1.5} />
+                </div>
                 <div>
                   <p className="text-white font-bold text-lg">No posts yet</p>
                   <p className="text-white/40 text-sm mt-1">Be the first to publish in {slug}.</p>
@@ -120,7 +143,7 @@ export default function CategoryPage() {
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center">
-                              <TrendingUp className="w-8 h-8 text-white/20" />
+                              <Icon className="w-8 h-8 text-white/10" strokeWidth={1.5} />
                             </div>
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
