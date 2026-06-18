@@ -27,19 +27,17 @@ export default function Header({ settings }: { settings?: any }) {
         <nav className="w-full max-w-4xl h-14 bg-[#111111]/90 backdrop-blur-2xl border border-white/[0.08] rounded-full flex items-center justify-between px-2 sm:px-3 shadow-[0_8px_40px_rgba(0,0,0,0.6)] pointer-events-auto">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 pl-2 pr-3 h-10 rounded-full hover:bg-white/5 transition-colors shrink-0 group">
+          <Link href="/" className="flex items-center gap-2 pl-2.5 pr-3 h-10 rounded-full hover:bg-white/5 transition-colors shrink-0 group">
             {settings?.avatarUrl ? (
               <img
                 src={settings.avatarUrl}
                 alt="CJP Media"
-                className="w-7 h-7 rounded-full object-cover border border-[#ccff00]/40"
+                className="w-7 h-7 rounded-full object-cover border border-[#ccff00]/40 shrink-0"
               />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center">
-                <Flame className="w-4 h-4 text-[#ccff00]" strokeWidth={2.5} />
-              </div>
+              <Flame className="w-5 h-5 text-[#ccff00] shrink-0" strokeWidth={2.5} />
             )}
-            <span className="text-white font-black text-[14px] tracking-tight hidden sm:block">
+            <span className="text-white font-black text-[14px] tracking-tight whitespace-nowrap">
               CJP <span className="text-[#ccff00]">Media</span>
             </span>
           </Link>
