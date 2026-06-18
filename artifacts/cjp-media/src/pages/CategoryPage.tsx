@@ -49,7 +49,7 @@ export default function CategoryPage() {
           imageUrl: data.imageUrls?.[0] || data.imageUrl || data.image || data.heroUrl || data.coverImage || "",
           createdAt: data.createdAt?.toDate?.() || new Date(),
         };
-      }));
+      }).filter((p: any) => p.moderationStatus !== 'removed'));
       setLoading(false);
     }, () => setLoading(false));
     return () => unsub();

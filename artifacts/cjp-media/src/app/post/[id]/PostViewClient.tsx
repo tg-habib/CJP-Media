@@ -96,7 +96,7 @@ export default function PostViewClient({
         );
         const snap = await getDocs(q);
         setRelatedPosts(
-          snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => p.id !== id).slice(0, 4)
+          snap.docs.map(d => ({ id: d.id, ...d.data() } as any)).filter((p: any) => p.id !== id && p.moderationStatus !== 'removed').slice(0, 4)
         );
       } catch (_) {}
     })();
@@ -162,6 +162,20 @@ export default function PostViewClient({
         <Flame className="w-10 h-10 text-white/10" />
         <p className="text-white font-bold text-lg">Post not found</p>
         <Link href="/feed" className="text-[#ccff00] text-sm font-bold hover:underline">← Back to feed</Link>
+        <BottomNav />
+      </div>
+    );
+  }
+
+  if (post?.moderationStatus === 'removed') {
+    return (
+      <div className="min-h-screen bg-[#050505] flex flex-col items-center justify-center gap-4 text-center px-6">
+        <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center mb-2">
+          <Flame className="w-7 h-7 text-red-400/50" />
+        </div>
+        <p className="text-white font-bold text-lg">This post has been removed</p>
+        <p className="text-white/30 text-sm max-w-[280px] leading-relaxed">This content is no longer available. It may have been taken down for policy reasons.</p>
+        <Link href="/feed" className="mt-2 text-[#ccff00] text-sm font-bold hover:underline">← Back to feed</Link>
         <BottomNav />
       </div>
     );

@@ -206,7 +206,7 @@ export default function HomePage() {
               (data.createdAt?._seconds ? data.createdAt._seconds * 1000 : data.createdAt) ||
               Date.now(),
           };
-        });
+        }).filter((p: any) => p.moderationStatus !== 'removed');
         setLatestPosts(all);
         setTotalViews(all.reduce((s: number, p: any) => s + (p.viewsCount || 0), 0));
         setTotalReactions(all.reduce((s: number, p: any) => s + (p.reactionsCount || 0), 0));

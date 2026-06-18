@@ -38,7 +38,7 @@ export default function SearchDialog() {
         try {
           const q = query(collection(db, 'posts'), orderBy('createdAt', 'desc'), limit(100));
           const snap = await getDocs(q);
-          const fetched = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const fetched = snap.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter((p: any) => p.moderationStatus !== 'removed');
           setPosts(fetched);
           setFilteredPosts(fetched);
         } catch (error) {

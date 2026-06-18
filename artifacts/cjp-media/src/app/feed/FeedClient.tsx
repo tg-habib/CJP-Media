@@ -365,7 +365,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
           createdAt: data.createdAt?.toDate ? data.createdAt.toDate().getTime() : data.createdAt,
           updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate().getTime() : data.updatedAt
         };
-      });
+      }).filter((p: any) => p.moderationStatus !== 'removed');
       
       if (snapshot.docs.length > 0) {
         setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
@@ -386,7 +386,7 @@ export default function FeedClient({ initialPosts, profile }: { initialPosts: an
     }
   };
 
-  const filteredPosts = filter === "Latest" ? posts : posts.filter(p => p.category === filter);
+  const filteredPosts = (filter === "Latest" ? posts : posts.filter(p => p.category === filter)).filter(p => p.moderationStatus !== 'removed');
 
   return (
     <div className="flex justify-center min-h-screen bg-[#0a0a0a]">
