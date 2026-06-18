@@ -131,7 +131,7 @@ export default function CategoryPage() {
                   return (
                     <Link key={post.id} href={`/post/${post.id}`} className="group block outline-none">
                       <div className="flex flex-col bg-[#111111] border border-white/[0.06] rounded-[20px] overflow-hidden hover:border-white/15 transition-all duration-300 hover:scale-[1.02]">
-                        <div className="relative aspect-square bg-[#0a0a0a] overflow-hidden">
+                        <div className="relative bg-[#0a0a0a] overflow-hidden">
                           {post.imageUrl ? (
                             <img
                               src={post.imageUrl}
@@ -139,14 +139,13 @@ export default function CategoryPage() {
                               loading="lazy"
                               decoding="async"
                               referrerPolicy="no-referrer"
-                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              className="w-full h-auto block"
                             />
                           ) : (
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="flex items-center justify-center h-40">
                               <Icon className="w-8 h-8 text-white/10" strokeWidth={1.5} />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
 
                         <div className="p-3 flex flex-col flex-1">

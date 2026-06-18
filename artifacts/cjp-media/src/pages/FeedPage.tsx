@@ -273,14 +273,14 @@ export default function FeedPage() {
                             {/* Image */}
                             {img && (
                               <Link href={`/post/${post.id}`} className="block mb-3 group">
-                                <div className="w-full rounded-xl overflow-hidden border border-white/[0.06] group-hover:border-white/[0.12] transition-colors bg-[#0d0d0d]" style={{ aspectRatio: "16/9" }}>
+                                <div className="w-full rounded-xl overflow-hidden border border-white/[0.06] group-hover:border-white/[0.12] transition-colors bg-[#0d0d0d]">
                                   <img
                                     src={img}
                                     alt={post.title}
                                     loading="lazy"
                                     decoding="async"
                                     referrerPolicy="no-referrer"
-                                    className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-500"
+                                    className="w-full h-auto block"
                                   />
                                 </div>
                               </Link>

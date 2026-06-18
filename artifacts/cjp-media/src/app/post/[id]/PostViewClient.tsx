@@ -315,16 +315,15 @@ export default function PostViewClient({
                 <div className="relative bg-[#0a0a0a]">
                   <div
                     ref={scrollContainerRef}
-                    className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-                    style={{ aspectRatio: '16/9' }}
+                    className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide items-start"
                     onScroll={handleScroll}
                   >
                     {images.map((img: string, i: number) => (
-                      <div key={i} className="w-full h-full shrink-0 snap-center">
+                      <div key={i} className="w-full shrink-0 snap-center">
                         <img
                           src={img}
                           alt={post.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-auto block"
                           loading={i === 0 ? 'eager' : 'lazy'}
                         />
                       </div>
