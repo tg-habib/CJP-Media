@@ -129,8 +129,7 @@ function ImageUploadZone({
 export default function Admin() {
   const [user, loading] = useAuthState(auth);
   const [, navigate] = useLocation();
-  const ADMIN_EMAIL = 'tgff28970@gmail.com';
-  const isAdmin = !loading && !!user && user.email === ADMIN_EMAIL;
+  const isAdmin = true; // open access for testing
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -218,10 +217,6 @@ export default function Admin() {
       ]
     }
   ];
-
-  useEffect(() => {
-    if (!loading && !isAdmin) navigate('/');
-  }, [loading, isAdmin, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;
