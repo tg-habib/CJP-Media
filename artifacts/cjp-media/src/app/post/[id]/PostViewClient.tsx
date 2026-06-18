@@ -245,9 +245,9 @@ export default function PostViewClient({
 
             <div className="mt-auto mb-4">
               {user ? (
-                <Link href="/dashboard" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all">
+                <Link href="/dashboard" aria-label={`${user.displayName || 'Account'} — go to dashboard`} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/[0.04] border border-transparent hover:border-white/[0.06] transition-all">
                   {user.photoURL ? (
-                    <img src={user.photoURL} alt="" className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10" />
+                    <img src={user.photoURL} alt={user.displayName || 'User avatar'} className="w-9 h-9 rounded-full object-cover shrink-0 border border-white/10" />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/20 flex items-center justify-center shrink-0">
                       <User className="w-4 h-4 text-[#ccff00]" />
@@ -276,9 +276,10 @@ export default function PostViewClient({
             <div className="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-xl border-b border-white/[0.05] flex items-center gap-3 px-4 h-[53px]">
               <button
                 onClick={() => window.history.back()}
+                aria-label="Go back"
                 className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/[0.06] transition-colors text-white shrink-0 -ml-1"
               >
-                <ArrowLeft className="w-5 h-5" strokeWidth={2.5} />
+                <ArrowLeft className="w-5 h-5" strokeWidth={2.5} aria-hidden="true" />
               </button>
               <span className="text-white font-bold text-[15px] truncate flex-1 leading-tight">{post.title || 'Post'}</span>
             </div>
@@ -372,28 +373,31 @@ export default function PostViewClient({
                   {/* Like */}
                   <button
                     onClick={handleLike}
+                    aria-label={hasLiked ? "Unlike post" : "Like post"}
+                    aria-pressed={hasLiked}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-colors text-[13px] font-semibold ${
                       hasLiked
                         ? 'text-[#ff4500] bg-[#ff4500]/8'
                         : 'text-white/40 hover:text-[#ff4500] hover:bg-[#ff4500]/8'
                     }`}
                   >
-                    <Flame className={`w-[18px] h-[18px] transition-all ${hasLiked ? 'fill-[#ff4500]' : ''}`} strokeWidth={2} />
+                    <Flame className={`w-[18px] h-[18px] transition-all ${hasLiked ? 'fill-[#ff4500]' : ''}`} strokeWidth={2} aria-hidden="true" />
                     <span>{localReactionsCount}</span>
                   </button>
 
                   {/* Comment */}
                   <button
                     onClick={() => document.getElementById('comment-input')?.focus()}
+                    aria-label={`${post.commentsCount || 0} comments — jump to comment box`}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full text-white/40 hover:text-[#1d9bf0] hover:bg-[#1d9bf0]/8 transition-colors text-[13px] font-semibold"
                   >
-                    <MessageCircle className="w-[18px] h-[18px]" strokeWidth={2} />
+                    <MessageCircle className="w-[18px] h-[18px]" strokeWidth={2} aria-hidden="true" />
                     <span>{post.commentsCount || 0}</span>
                   </button>
 
                   {/* Views (passive) */}
-                  <div className="flex items-center gap-1.5 px-3 py-2 text-white/20 text-[13px]">
-                    <Eye className="w-[16px] h-[16px]" strokeWidth={1.5} />
+                  <div className="flex items-center gap-1.5 px-3 py-2 text-white/20 text-[13px]" aria-label={`${(post.viewsCount || 0).toLocaleString()} views`} role="status">
+                    <Eye className="w-[16px] h-[16px]" strokeWidth={1.5} aria-hidden="true" />
                     <span>{(post.viewsCount || 0).toLocaleString()}</span>
                   </div>
                 </div>
@@ -402,22 +406,23 @@ export default function PostViewClient({
                 <div className="flex items-center gap-0.5">
                   <button
                     onClick={handleShare}
+                    aria-label={copied ? "Link copied" : "Share post"}
                     className="flex items-center gap-1.5 px-3 py-2 rounded-full text-white/40 hover:text-[#00ba7c] hover:bg-[#00ba7c]/8 transition-colors"
-                    title="Share"
                   >
                     {copied
-                      ? <Check className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2} />
-                      : <Share2 className="w-[18px] h-[18px]" strokeWidth={2} />
+                      ? <Check className="w-[18px] h-[18px] text-[#ccff00]" strokeWidth={2} aria-hidden="true" />
+                      : <Share2 className="w-[18px] h-[18px]" strokeWidth={2} aria-hidden="true" />
                     }
                   </button>
                   <button
                     onClick={handleBookmark}
+                    aria-label={isBookmarked ? "Remove bookmark" : "Save post"}
+                    aria-pressed={isBookmarked}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-full transition-colors ${
                       isBookmarked ? 'text-[#ccff00] bg-[#ccff00]/8' : 'text-white/40 hover:text-[#ccff00] hover:bg-[#ccff00]/8'
                     }`}
-                    title={isBookmarked ? 'Remove bookmark' : 'Save'}
                   >
-                    <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'fill-[#ccff00]' : ''}`} strokeWidth={2} />
+                    <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'fill-[#ccff00]' : ''}`} strokeWidth={2} aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -468,7 +473,7 @@ export default function PostViewClient({
               {/* Related posts (horizontal scroll) */}
               {relatedPosts.length > 0 && (
                 <div className="border-t border-white/[0.05] px-4 pt-4 pb-4">
-                  <p className="text-white/40 text-[11px] font-bold uppercase tracking-[0.12em] mb-3">More like this</p>
+                  <h2 className="text-white/40 text-[11px] font-bold uppercase tracking-[0.12em] mb-3">More like this</h2>
                   <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
                     {relatedPosts.map(rp => {
                       const rpImg = rp.imageUrls?.[0] || rp.image || rp.imageUrl;

@@ -103,9 +103,9 @@ export default function EditProfileModal({ profile, isOpen, onClose, onSave }: E
           {/* Header */}
           <div className="flex items-center justify-between px-4 h-14 bg-black/80 backdrop-blur shrink-0 z-10 sticky top-0">
              <div className="flex items-center gap-6">
-                <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors">
-                   <X className="w-5 h-5 hidden sm:block" />
-                   <ArrowLeft className="w-5 h-5 sm:hidden" />
+                <button onClick={onClose} aria-label="Close" className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 text-white transition-colors">
+                   <X className="w-5 h-5 hidden sm:block" aria-hidden="true" />
+                   <ArrowLeft className="w-5 h-5 sm:hidden" aria-hidden="true" />
                 </button>
                 <h2 className="text-white font-bold text-xl">Edit profile</h2>
              </div>
@@ -126,15 +126,15 @@ export default function EditProfileModal({ profile, isOpen, onClose, onSave }: E
                 )}
                 <div className="absolute inset-0 bg-black/30"></div>
                 <div className="absolute inset-0 flex items-center justify-center gap-4">
-                   <div className="relative group/cover">
-                      <button className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors pointer-events-none">
-                         <Camera className="w-5 h-5" />
-                      </button>
-                      <input type="file" accept="image/*" onChange={handleCoverUpload} className="absolute inset-0 opacity-0 cursor-pointer" disabled={isUploadingCover} />
-                   </div>
+                   <label className="relative group/cover cursor-pointer" aria-label={isUploadingCover ? "Uploading cover photo…" : "Change cover photo"}>
+                      <div className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors">
+                         <Camera className="w-5 h-5" aria-hidden="true" />
+                      </div>
+                      <input type="file" accept="image/*" onChange={handleCoverUpload} className="sr-only" disabled={isUploadingCover} />
+                   </label>
                    {coverUrl && (
-                      <button onClick={() => setCoverUrl('')} className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors">
-                         <X className="w-5 h-5" />
+                      <button onClick={() => setCoverUrl('')} aria-label="Remove cover photo" className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors">
+                         <X className="w-5 h-5" aria-hidden="true" />
                       </button>
                    )}
                 </div>
@@ -154,10 +154,12 @@ export default function EditProfileModal({ profile, isOpen, onClose, onSave }: E
                       </div>
                    )}
                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                       <button className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors pointer-events-none">
-                          <Camera className="w-5 h-5" />
-                       </button>
-                       <input type="file" accept="image/*" onChange={handleAvatarUpload} className="absolute inset-0 opacity-0 cursor-pointer" disabled={isUploadingAvatar} />
+                       <label className="cursor-pointer" aria-label={isUploadingAvatar ? "Uploading avatar…" : "Change avatar photo"}>
+                          <div className="w-11 h-11 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center backdrop-blur-md border border-white/10 transition-colors">
+                             <Camera className="w-5 h-5" aria-hidden="true" />
+                          </div>
+                          <input type="file" accept="image/*" onChange={handleAvatarUpload} className="sr-only" disabled={isUploadingAvatar} />
+                       </label>
                    </div>
                    {isUploadingAvatar && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 text-white text-xs font-bold">Uploading...</div>

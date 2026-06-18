@@ -118,9 +118,10 @@ export default function SearchDialog() {
                 />
                 <button 
                   onClick={() => setIsOpen(false)}
+                  aria-label="Close search"
                   className="absolute right-6 top-1/2 -translate-y-1/2 p-2 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6" aria-hidden="true" />
                 </button>
               </div>
 
@@ -134,18 +135,16 @@ export default function SearchDialog() {
                 ) : filteredPosts.length > 0 ? (
                   <div className="grid grid-cols-1 gap-3">
                     {filteredPosts.map(post => (
-                      <div 
+                      <Link
                         key={post.id}
-                        onClick={() => {
-                          setIsOpen(false);
-                          navigate(`/post/${post.id}`);
-                        }}
-                        className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 cursor-pointer transition-colors group"
+                        href={`/post/${post.id}`}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 transition-colors group"
                       >
                         <div className="relative w-20 h-16 shrink-0 rounded-lg overflow-hidden bg-black/50">
                           <img 
                             src={post.imageUrls?.[0] || post.image || post.imageUrl || post.coverImage || 'https://picsum.photos/seed/placeholder/800/600'}
-                            alt=""
+                            alt={post.title}
                             className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
@@ -161,7 +160,7 @@ export default function SearchDialog() {
                             )}
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 ) : (

@@ -66,20 +66,20 @@ export default function Footer({ settings }: { settings: any }) {
             </p>
 
             <div className="flex items-center gap-3">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
-                 <Instagram className="w-4 h-4" />
+              <a href="#" aria-label="Follow us on Instagram" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
+                 <Instagram className="w-4 h-4" aria-hidden="true" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
+              <a href="#" aria-label="Follow us on X (Twitter)" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
                  {xIcon}
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
-                 <Youtube className="w-4 h-4" />
+              <a href="#" aria-label="Subscribe on YouTube" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
+                 <Youtube className="w-4 h-4" aria-hidden="true" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
-                 <MessageCircle className="w-4 h-4" />
+              <a href="#" aria-label="Join our Discord server" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
+                 <MessageCircle className="w-4 h-4" aria-hidden="true" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
-                 <Send className="w-4 h-4" />
+              <a href="#" aria-label="Join us on Telegram" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#ccff00]/50 hover:text-[#ccff00] transition-colors text-white/70">
+                 <Send className="w-4 h-4" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -200,10 +200,11 @@ export default function Footer({ settings }: { settings: any }) {
            </div>
            
            <div className="w-full sm:w-auto flex-1 max-w-md z-10 flex flex-col gap-3">
-             <input type="email" placeholder="Enter your email" className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-5 h-14 text-white text-[15px] font-medium placeholder-white/30 outline-none focus:border-[#ccff00]/50 transition-colors" />
+             <label htmlFor="footer-email" className="sr-only">Email address</label>
+             <input id="footer-email" type="email" placeholder="Enter your email" className="w-full bg-[#1a1a1a] border border-white/10 rounded-xl px-5 h-14 text-white text-[15px] font-medium placeholder-white/30 outline-none focus:border-[#ccff00]/50 transition-colors" />
              <button className="w-full bg-[#ccff00] hover:bg-[#bbe600] text-black font-extrabold text-[15px] rounded-xl h-14 flex items-center justify-center gap-2 transition-colors">
                Subscribe
-               <ArrowRight className="w-5 h-5" />
+               <ArrowRight className="w-5 h-5" aria-hidden="true" />
              </button>
            </div>
         </div>

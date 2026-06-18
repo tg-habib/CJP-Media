@@ -172,7 +172,7 @@ function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any,
              </div>
           </div>
         </div>
-        <button className="text-white/40 hover:text-white p-1.5 rounded-full hover:bg-white/5 transition-colors -mr-1.5">
+        <button aria-label="More options" className="text-white/40 hover:text-white p-1.5 rounded-full hover:bg-white/5 transition-colors -mr-1.5">
           <MoreVertical className="w-5 h-5" />
         </button>
       </div>
@@ -233,28 +233,30 @@ function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any,
       {/* Interaction Row */}
       <div className="px-4 py-3 flex items-center justify-between text-white/60 text-sm">
         <div className="flex items-center gap-5 sm:gap-6">
-           <button className="flex items-center gap-1.5 hover:text-white transition">
-             <Eye className="w-[18px] h-[18px] text-white/50" />
+           <div className="flex items-center gap-1.5" aria-label={`${post.viewsCount || 0} views`} role="status">
+             <Eye className="w-[18px] h-[18px] text-white/50" aria-hidden="true" />
              <span className="text-[13px]">{post.viewsCount || 0}</span>
-           </button>
+           </div>
            <button 
              onClick={handleLike}
+             aria-label={hasLiked ? "Unlike post" : "Like post"}
+             aria-pressed={hasLiked}
              className={`flex items-center gap-1.5 transition ${hasLiked ? 'text-[#ff3366]' : 'hover:text-white'}`}
            >
-             <Flame className={`w-[18px] h-[18px] ${hasLiked ? 'fill-[#ff3366] text-[#ff3366]' : 'text-white/50'}`} />
+             <Flame className={`w-[18px] h-[18px] ${hasLiked ? 'fill-[#ff3366] text-[#ff3366]' : 'text-white/50'}`} aria-hidden="true" />
              <span className="text-[13px]">{localReactionsCount}</span>
            </button>
-           <Link href={`/post/${post.id}`} className="flex items-center gap-1.5 hover:text-white transition cursor-pointer">
-             <MessageCircle className="w-[18px] h-[18px] text-white/50" />
+           <Link href={`/post/${post.id}`} aria-label={`${localCommentsCount} comments — view post`} className="flex items-center gap-1.5 hover:text-white transition cursor-pointer">
+             <MessageCircle className="w-[18px] h-[18px] text-white/50" aria-hidden="true" />
              <span className="text-[13px]">{localCommentsCount}</span>
            </Link>
-           <button onClick={handleShare} className="flex items-center gap-1.5 hover:text-white transition">
-             {copied ? <Check className="w-[18px] h-[18px] text-[#ccff00]" /> : <Share2 className="w-[18px] h-[18px] text-white/50" />}
+           <button onClick={handleShare} aria-label={copied ? "Link copied" : "Share post"} className="flex items-center gap-1.5 hover:text-white transition">
+             {copied ? <Check className="w-[18px] h-[18px] text-[#ccff00]" aria-hidden="true" /> : <Share2 className="w-[18px] h-[18px] text-white/50" aria-hidden="true" />}
              <span className="text-[13px]">{post.sharesCount || 0}</span>
            </button>
         </div>
-        <button onClick={handleBookmark} className={`transition ${isBookmarked ? 'text-[#ccff00]' : 'hover:text-white'}`}>
-          <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'fill-[#ccff00] text-[#ccff00]' : 'text-white/50'}`} />
+        <button onClick={handleBookmark} aria-label={isBookmarked ? "Remove bookmark" : "Bookmark post"} aria-pressed={isBookmarked} className={`transition ${isBookmarked ? 'text-[#ccff00]' : 'hover:text-white'}`}>
+          <Bookmark className={`w-[18px] h-[18px] ${isBookmarked ? 'fill-[#ccff00] text-[#ccff00]' : 'text-white/50'}`} aria-hidden="true" />
         </button>
       </div>
       
@@ -300,8 +302,8 @@ function FeedPostItem({ post, user, pName, pAvatarUrl }: { post: any, user: any,
              className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/30 w-full font-medium" 
            />
            <div className="flex items-center gap-3 text-white/40 pl-2 shrink-0">
-             <Smile className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
-             <ImageIcon className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
+             <button type="button" aria-label="Add emoji" className="hover:text-[#ccff00] transition-colors"><Smile className="w-5 h-5" aria-hidden="true" /></button>
+             <button type="button" aria-label="Attach image" className="hover:text-[#ccff00] transition-colors"><ImageIcon className="w-5 h-5" aria-hidden="true" /></button>
            </div>
         </div>
       </div>

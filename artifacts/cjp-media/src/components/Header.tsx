@@ -77,11 +77,12 @@ export default function Header({ settings }: { settings?: any }) {
               <div className="flex items-center gap-1">
                 <Link
                   href="/notifications"
+                  aria-label="Notifications"
                   className="flex items-center justify-center w-9 h-9 rounded-full text-white/50 hover:text-white hover:bg-white/8 transition-colors"
                 >
-                  <Bell className="w-4.5 h-4.5" />
+                  <Bell className="w-4.5 h-4.5" aria-hidden="true" />
                 </Link>
-                <Link href="/dashboard" className="ml-0.5 rounded-full focus-visible:outline-none hover:ring-2 hover:ring-[#ccff00]/60 hover:ring-offset-1 hover:ring-offset-[#111] transition-all">
+                <Link href="/dashboard" aria-label="Your profile and dashboard" className="ml-0.5 rounded-full focus-visible:outline-none hover:ring-2 hover:ring-[#ccff00]/60 hover:ring-offset-1 hover:ring-offset-[#111] transition-all">
                   <Avatar className="w-9 h-9 border border-white/10">
                     <AvatarImage src={user.photoURL || ''} className="object-cover" />
                     <AvatarFallback className="bg-[#ccff00]/10 text-[#ccff00] text-sm font-black">

@@ -47,8 +47,8 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
       {/* Header */}
       <div className="flex items-center justify-between pb-4">
          <h2 className="text-[17px] font-semibold text-[#f5f5f5]">Comments ({displayCount})</h2>
-         <button className="flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white transition-colors">
-           Most recent <ChevronDown className="w-3.5 h-3.5" />
+         <button aria-label="Sort comments — most recent" className="flex items-center gap-1.5 text-[13px] text-white/50 hover:text-white transition-colors">
+           Most recent <ChevronDown className="w-3.5 h-3.5" aria-hidden="true" />
          </button>
       </div>
 
@@ -86,19 +86,19 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
                         </div>
                         <p className="text-[14px] text-white/80 leading-snug">{comment.text}</p>
                      </div>
-                     <button className="text-white/40 hover:text-white mt-0.5">
-                       <MoreVertical className="w-4 h-4" />
+                     <button aria-label="Comment options" className="text-white/40 hover:text-white mt-0.5">
+                       <MoreVertical className="w-4 h-4" aria-hidden="true" />
                      </button>
                   </div>
                   
                   {/* Actions */}
                   <div className="flex items-center gap-4 mt-3">
-                     <button className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors">
-                        <ThumbsUp className="w-[14px] h-[14px]" />
+                     <button aria-label="Like comment" className="flex items-center gap-1.5 text-white/50 hover:text-white transition-colors">
+                        <ThumbsUp className="w-[14px] h-[14px]" aria-hidden="true" />
                         <span className="text-[13px] font-medium font-mono">0</span>
                      </button>
-                     <div className="w-[1px] h-3 bg-white/20"></div>
-                     <button className="text-[13px] font-medium text-white/50 hover:text-white transition-colors">
+                     <div className="w-[1px] h-3 bg-white/20" aria-hidden="true"></div>
+                     <button aria-label={`Reply to ${comment.userName}`} className="text-[13px] font-medium text-white/50 hover:text-white transition-colors">
                         Reply
                      </button>
                   </div>
@@ -126,8 +126,8 @@ export default function CommentsSection({ postId, initialCommentsCount }: { post
              className="bg-transparent border-none outline-none text-[14px] text-white placeholder-white/30 w-full font-medium" 
            />
            <div className="flex items-center gap-3 text-white/40 pl-2 shrink-0">
-             <Smile className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
-             <ImageIcon className="w-5 h-5 hover:text-[#ccff00] cursor-pointer transition-colors" />
+             <button type="button" aria-label="Add emoji" className="hover:text-[#ccff00] transition-colors"><Smile className="w-5 h-5" aria-hidden="true" /></button>
+             <button type="button" aria-label="Attach image" className="hover:text-[#ccff00] transition-colors"><ImageIcon className="w-5 h-5" aria-hidden="true" /></button>
            </div>
         </div>
       </div>
