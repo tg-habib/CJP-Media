@@ -17,6 +17,8 @@ import { Link } from 'wouter';
 import { uploadImageAction, saveImageSettings, getImageSettings, getProfileSettings, saveProfileSettings } from './actions';
 import { motion, AnimatePresence } from 'motion/react';
 import DashboardTab from './DashboardTab';
+import UsersTab from './UsersTab';
+import CommentsTab from './CommentsTab';
 
 const CATEGORIES = ["Trending", "Latest", "Economy Roasts", "Politics", "Memes", "Illustrations"];
 
@@ -182,8 +184,8 @@ export default function Admin() {
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'manage', label: 'Posts', icon: FileText },
-        { id: 'users', label: 'Users', icon: Users, soon: true },
-        { id: 'comments', label: 'Comments', icon: MessageSquare, soon: true },
+        { id: 'users', label: 'Users', icon: Users },
+        { id: 'comments', label: 'Comments', icon: MessageSquare },
         { id: 'reports', label: 'Reports', icon: Flag, soon: true },
         { id: 'moderation', label: 'Moderation', icon: Shield, soon: true },
       ]
@@ -661,7 +663,9 @@ export default function Admin() {
       <div className="flex-1 flex flex-col h-full overflow-hidden relative bg-[#050505]">
          <div className="flex-1 overflow-y-auto">
            {activeTab === 'dashboard' && <DashboardTab posts={posts} setActiveTab={setActiveTab} setIsMobileMenuOpen={setIsMobileMenuOpen} />}
-           {activeTab !== 'dashboard' && (
+           {activeTab === 'users' && <UsersTab setIsMobileMenuOpen={setIsMobileMenuOpen} />}
+           {activeTab === 'comments' && <CommentsTab posts={posts} setIsMobileMenuOpen={setIsMobileMenuOpen} />}
+           {activeTab !== 'dashboard' && activeTab !== 'users' && activeTab !== 'comments' && (
              <div className="container mx-auto px-4 py-8 lg:py-10 max-w-6xl pb-8">
                 <div className="flex items-center gap-4 mb-6 lg:hidden">
                    <button onClick={() => setIsMobileMenuOpen(true)} className="text-white hover:text-white/80">
