@@ -54,32 +54,32 @@
     --card-foreground: #000000;
     --popover: #ffffff;
     --popover-foreground: #000000;
-    --primary: #C3FF00;
+    --primary: #ccff00;
     --primary-foreground: #000000;
     --secondary: #f4f4f5;
     --secondary-foreground: #000000;
     --muted: #f4f4f5;
     --muted-foreground: #52525b;
-    --accent: #C3FF00;
+    --accent: #ccff00;
     --accent-foreground: #000000;
     --destructive: #dc2626;
     --border: #e4e4e7;
     --input: #e4e4e7;
-    --ring: #C3FF00;
+    --ring: #ccff00;
     --chart-1: #000000;
-    --chart-2: #C3FF00;
+    --chart-2: #ccff00;
     --chart-3: #52525b;
     --chart-4: #a1a1aa;
     --chart-5: #e4e4e7;
     --radius: 0.625rem;
     --sidebar: #ffffff;
     --sidebar-foreground: #000000;
-    --sidebar-primary: #C3FF00;
+    --sidebar-primary: #ccff00;
     --sidebar-primary-foreground: #000000;
     --sidebar-accent: #f4f4f5;
     --sidebar-accent-foreground: #000000;
     --sidebar-border: #e4e4e7;
-    --sidebar-ring: #C3FF00;
+    --sidebar-ring: #ccff00;
 }
 
 .dark {
@@ -141,7 +141,7 @@
   }
   @keyframes marquee {
     0% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    100% { transform: translateX(-50%); }
   }
   .animate-marquee {
     animation: marquee 30s linear infinite;

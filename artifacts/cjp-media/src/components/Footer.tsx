@@ -34,7 +34,7 @@ export default function Footer({ settings }: { settings: any }) {
               <img 
                 src={settings.footerUrl} 
                 alt="CJP Mascot" 
-                className="object-cover object-right-top"
+                className="w-full h-full object-cover object-right-top"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-[#0c0c0c] to-transparent z-10"></div>
               <div className="absolute inset-0 bg-gradient-to-t from-[#0c0c0c] to-transparent z-10"></div>

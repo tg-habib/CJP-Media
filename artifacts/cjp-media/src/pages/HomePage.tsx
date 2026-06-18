@@ -78,18 +78,17 @@ function HeroCard({ post }: { post: any }) {
   return (
     <Link
       href={`/post/${post.id}`}
-      className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.16] transition-all duration-300 block cursor-pointer"
+      className="group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-white/[0.18] transition-all duration-300 block cursor-pointer"
       style={{ minHeight: 360 }}
     >
       {img ? (
-        <img src={img} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.025] transition-transform duration-700" />
+        <img src={img} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
       ) : (
         <div className="absolute inset-0 bg-[#0d0d0d] flex items-center justify-center">
           <Flame className="w-10 h-10 text-white/5" />
         </div>
       )}
-      {/* layered gradient: bottom heavy for text, top slight for badge area */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,0.08) 70%, transparent 100%)" }} />
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.97) 0%, rgba(0,0,0,0.5) 35%, rgba(0,0,0,0.08) 70%, transparent 100%)" }} />
 
       {post.category && (
         <div className="absolute top-4 left-4 z-10">
@@ -125,11 +124,11 @@ function MedCard({ post }: { post: any }) {
   return (
     <Link
       href={`/post/${post.id}`}
-      className="group relative rounded-xl overflow-hidden border border-white/[0.06] hover:border-white/[0.14] transition-all duration-300 flex flex-col cursor-pointer"
+      className="group relative rounded-xl overflow-hidden border border-white/[0.06] hover:border-white/[0.16] transition-all duration-300 flex flex-col cursor-pointer"
       style={{ minHeight: 160 }}
     >
       {img ? (
-        <img src={img} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700" />
+        <img src={img} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.05] transition-transform duration-700" />
       ) : (
         <div className="absolute inset-0 bg-[#0d0d0d]" />
       )}
@@ -160,7 +159,7 @@ function SmCard({ post }: { post: any }) {
   return (
     <Link
       href={`/post/${post.id}`}
-      className="group flex gap-3 rounded-xl border border-white/[0.05] hover:border-white/[0.10] hover:bg-white/[0.012] transition-all p-3 cursor-pointer items-center"
+      className="group flex gap-3 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.025] transition-all p-3 cursor-pointer items-center"
     >
       <div className="w-[68px] h-[52px] rounded-lg overflow-hidden shrink-0 relative bg-[#0d0d0d]">
         {img && <img src={img} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />}
@@ -176,7 +175,7 @@ function SmCard({ post }: { post: any }) {
           <span className="ml-auto">{ago(post.createdAt)}</span>
         </div>
       </div>
-      <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.08] group-hover:text-[#ccff00]/50 transition-colors shrink-0" />
+      <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.10] group-hover:text-[#ccff00]/60 transition-colors shrink-0" />
     </Link>
   );
 }
@@ -224,7 +223,7 @@ export default function HomePage() {
   const featured    = latestPosts[0];
   const secondary   = latestPosts.slice(1, 3);
   const listCards   = latestPosts.slice(3, 7);
-  const moreStories = latestPosts.slice(4, 12);          // starts at 4 so it's visible sooner
+  const moreStories = latestPosts.slice(4, 12);
   const trending    = [...latestPosts]
     .sort((a: any, b: any) =>
       ((b.viewsCount || 0) + (b.reactionsCount || 0) * 2) -
@@ -248,14 +247,16 @@ export default function HomePage() {
         <Header settings={profileSettings} />
 
         {/* ── TICKER ── */}
-        <div className="w-full bg-[#080808] border-b border-white/[0.04] h-9 flex items-center overflow-hidden">
+        <div className="w-full bg-[#080808] border-b border-white/[0.05] h-9 flex items-center overflow-hidden">
           <div className="shrink-0 bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.2em] px-4 h-full flex items-center gap-1.5 z-10 whitespace-nowrap select-none">
             <Radio className="w-3 h-3" strokeWidth={2.5} /> LIVE
           </div>
-          <div className="flex-1 overflow-hidden">
-            <div className="flex w-[200%] animate-marquee whitespace-nowrap">
+          {/* right-side fade mask */}
+          <div className="flex-1 overflow-hidden relative">
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#080808] to-transparent z-10 pointer-events-none" />
+            <div className="flex animate-marquee whitespace-nowrap">
               {[0, 1].map(i => (
-                <div key={i} className="flex-1 flex items-center gap-8 text-white/30 text-[11px] font-medium px-5">
+                <div key={i} className="flex items-center gap-8 text-white/35 text-[11px] font-medium px-5 shrink-0">
                   {latestPosts.length > 0
                     ? latestPosts.slice(0, 8).map((p, idx) => (
                         <span key={idx} className="flex items-center gap-2 shrink-0">
@@ -282,8 +283,10 @@ export default function HomePage() {
 
         {/* ── HERO ── */}
         <section className="relative w-full overflow-hidden pt-8 sm:pt-12 pb-8">
-          {/* ambient glow — right side only */}
+          {/* ambient glow — right side accent */}
           <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-[#ccff00]/[0.035] rounded-full blur-[120px] translate-x-1/3 pointer-events-none" />
+          {/* ambient glow — bottom left warmth */}
+          <div className="absolute bottom-0 left-0 w-[400px] h-[300px] bg-[#ff4500]/[0.022] rounded-full blur-[100px] -translate-x-1/4 pointer-events-none" />
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center">
@@ -316,14 +319,14 @@ export default function HomePage() {
                 <div className="flex items-center gap-2.5 flex-wrap mb-8">
                   <Link
                     href="/feed"
-                    className="group inline-flex items-center gap-2 px-5 py-2.5 bg-[#ccff00] text-black font-bold text-[13px] rounded-full hover:bg-white transition-all shadow-[0_0_24px_rgba(204,255,0,0.18)]"
+                    className="group inline-flex items-center gap-2 px-5 py-2.5 bg-[#ccff00] text-black font-bold text-[13px] rounded-full hover:bg-white transition-all shadow-[0_0_28px_rgba(204,255,0,0.22)]"
                   >
                     Enter the Feed
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
                   <Link
                     href="/category/Trending"
-                    className="inline-flex items-center gap-2 px-4 py-2.5 border border-white/[0.08] text-white/50 font-medium text-[13px] rounded-full hover:bg-white/[0.04] hover:border-white/[0.15] hover:text-white/80 transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 border border-white/[0.09] text-white/55 font-medium text-[13px] rounded-full hover:bg-white/[0.05] hover:border-white/[0.18] hover:text-white/85 transition-all"
                   >
                     <TrendingUp className="w-3.5 h-3.5 text-[#ccff00]" strokeWidth={2} />
                     Trending
@@ -353,7 +356,7 @@ export default function HomePage() {
                 {featured ? (
                   <Link
                     href={`/post/${featured.id}`}
-                    className="group block relative rounded-3xl overflow-hidden border border-white/[0.07] hover:border-white/[0.16] transition-all duration-500 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+                    className="group block relative rounded-3xl overflow-hidden border border-white/[0.07] hover:border-white/[0.18] transition-all duration-500 shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
                     style={{ height: 480 }}
                   >
                     {getImg(featured) ? (
@@ -422,17 +425,21 @@ export default function HomePage() {
         {/* ── TOPICS ── */}
         <div className="border-t border-white/[0.04]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 w-full">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
-              {CATEGORIES.map(({ href, label, Icon, color }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.07] bg-white/[0.015] hover:bg-white/[0.04] hover:border-white/[0.13] transition-all whitespace-nowrap shrink-0"
-                >
-                  <Icon className="w-3.5 h-3.5 shrink-0 transition-colors" style={{ color }} strokeWidth={2} />
-                  <span className="text-white/55 group-hover:text-white/85 text-[12px] font-semibold transition-colors">{label}</span>
-                </Link>
-              ))}
+            {/* fade-out right edge to hint at scrollability */}
+            <div className="relative">
+              <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-0.5">
+                {CATEGORIES.map(({ href, label, Icon, color }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/[0.07] bg-white/[0.015] hover:bg-white/[0.05] hover:border-white/[0.15] transition-all whitespace-nowrap shrink-0"
+                  >
+                    <Icon className="w-3.5 h-3.5 shrink-0 transition-colors" style={{ color }} strokeWidth={2} />
+                    <span className="text-white/55 group-hover:text-white/90 text-[12px] font-semibold transition-colors">{label}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -493,11 +500,11 @@ export default function HomePage() {
               {/* #1 big card */}
               <Link
                 href={`/post/${trending[0].id}`}
-                className="lg:col-span-6 group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#ff4500]/25 transition-all duration-300 block cursor-pointer"
+                className="lg:col-span-6 group relative rounded-2xl overflow-hidden border border-white/[0.06] hover:border-[#ff4500]/30 transition-all duration-300 block cursor-pointer"
                 style={{ minHeight: 300 }}
               >
                 {getImg(trending[0]) ? (
-                  <img src={getImg(trending[0])} alt={trending[0].title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.025] transition-transform duration-700" />
+                  <img src={getImg(trending[0])} alt={trending[0].title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700" />
                 ) : (
                   <div className="absolute inset-0 bg-[#0d0d0d]" />
                 )}
@@ -525,9 +532,9 @@ export default function HomePage() {
                   <Link
                     key={post.id}
                     href={`/post/${post.id}`}
-                    className="group flex gap-3 py-3.5 hover:bg-white/[0.01] rounded-xl px-2 -mx-2 transition-colors cursor-pointer items-center first:pt-0 last:pb-0"
+                    className="group flex gap-3 py-3.5 hover:bg-white/[0.02] rounded-xl px-2 -mx-2 transition-colors cursor-pointer items-center first:pt-0 last:pb-0"
                   >
-                    <span className="text-[22px] font-black text-white/20 w-7 shrink-0 text-center leading-none tabular-nums">
+                    <span className="text-[22px] font-black text-white/20 w-7 shrink-0 text-center leading-none tabular-nums group-hover:text-[#ff4500]/50 transition-colors">
                       {i + 2}
                     </span>
                     <div className="w-[60px] h-[48px] rounded-lg overflow-hidden shrink-0 relative bg-[#0d0d0d]">
@@ -545,7 +552,7 @@ export default function HomePage() {
                         <span className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-[#ff4500]" />{fmtNum(post.reactionsCount || 0)}</span>
                       </div>
                     </div>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.07] group-hover:text-[#ccff00]/40 transition-colors shrink-0" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.09] group-hover:text-[#ccff00]/50 transition-colors shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -567,9 +574,9 @@ export default function HomePage() {
                   <Link
                     key={post.id}
                     href={`/post/${post.id}`}
-                    className="group flex gap-4 py-4 hover:bg-white/[0.01] rounded-xl px-2 -mx-2 transition-colors cursor-pointer items-center"
+                    className="group flex gap-4 py-4 hover:bg-white/[0.018] rounded-xl px-2 -mx-2 transition-colors cursor-pointer items-center"
                   >
-                    <span className="text-[11px] font-black text-white/15 w-4 shrink-0 text-right tabular-nums">{i + 1}</span>
+                    <span className="text-[11px] font-black text-white/15 w-4 shrink-0 text-right tabular-nums group-hover:text-white/30 transition-colors">{i + 1}</span>
                     <div className="w-[76px] h-[56px] rounded-xl overflow-hidden shrink-0 relative bg-[#0d0d0d]">
                       {getImg(post) && (
                         <img src={getImg(post)} alt={post.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -590,14 +597,14 @@ export default function HomePage() {
                         <span className="flex items-center gap-1"><MessageCircle className="w-3 h-3" />{post.commentsCount || 0}</span>
                       </div>
                     </div>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.07] group-hover:text-[#ccff00]/40 transition-colors shrink-0" />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-white/[0.09] group-hover:text-[#ccff00]/50 transition-colors shrink-0" />
                   </Link>
                 ))}
               </div>
 
               <Link
                 href="/feed"
-                className="mt-5 flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/[0.06] text-white/35 font-medium text-[12px] hover:border-white/[0.12] hover:text-white/60 transition-all"
+                className="mt-5 flex items-center justify-center gap-2 w-full py-3.5 rounded-xl border border-white/[0.08] text-white/45 font-semibold text-[13px] hover:border-[#ccff00]/25 hover:text-[#ccff00]/70 hover:bg-[#ccff00]/[0.04] transition-all"
               >
                 Load more stories <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -617,14 +624,14 @@ export default function HomePage() {
             <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
               <Link
                 href="/feed"
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-black text-white font-bold text-[13px] rounded-full hover:bg-[#111] transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-black text-white font-bold text-[13px] rounded-full hover:bg-[#0d0d0d] active:scale-[0.97] transition-all whitespace-nowrap shadow-[0_4px_16px_rgba(0,0,0,0.3)]"
               >
                 <Flame className="w-3.5 h-3.5 text-[#ccff00]" strokeWidth={2.5} />
                 Enter the Feed
               </Link>
               <Link
                 href="/category/Trending"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-black/[0.08] border border-black/[0.12] text-black/75 font-bold text-[13px] rounded-full hover:bg-black/[0.16] transition-all whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-black/[0.08] border border-black/[0.14] text-black/80 font-bold text-[13px] rounded-full hover:bg-black/[0.18] active:scale-[0.97] transition-all whitespace-nowrap"
               >
                 <TrendingUp className="w-3.5 h-3.5" />
                 Trending
