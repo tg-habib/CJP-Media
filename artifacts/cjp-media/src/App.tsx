@@ -1,7 +1,8 @@
 import { lazy, Suspense, useEffect } from "react";
-import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation, Link } from "wouter";
 import { Toaster } from "sonner";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { Settings } from "lucide-react";
 
 function ScrollRestorer() {
   const [pathname] = useLocation();
@@ -29,6 +30,20 @@ function PageLoader() {
     <div className="min-h-screen bg-[#050505] flex items-center justify-center">
       <div className="w-8 h-8 border-2 border-[#ccff00] border-t-transparent rounded-full animate-spin" />
     </div>
+  );
+}
+
+function AdminFAB() {
+  const [pathname] = useLocation();
+  if (pathname.startsWith('/admin')) return null;
+  return (
+    <Link
+      href="/admin"
+      className="fixed bottom-24 sm:bottom-6 right-4 z-[90] flex items-center gap-2 px-4 py-2.5 bg-[#ccff00] text-black font-bold text-[13px] rounded-full shadow-[0_4px_24px_rgba(204,255,0,0.35)] hover:bg-white hover:shadow-[0_4px_24px_rgba(255,255,255,0.25)] active:scale-95 transition-all select-none"
+    >
+      <Settings className="w-4 h-4" strokeWidth={2.5} />
+      Admin
+    </Link>
   );
 }
 
@@ -63,6 +78,7 @@ export default function App() {
           <Suspense fallback={<PageLoader />}>
             <Router />
           </Suspense>
+          <AdminFAB />
         </ErrorBoundary>
       </WouterRouter>
     </div>

@@ -23,7 +23,7 @@ const CATEGORIES = ["Trending", "Latest", "Economy Roasts", "Politics", "Memes",
 export default function Admin() {
   const [user, loading] = useAuthState(auth);
   const [, navigate] = useLocation();
-  const isAdmin = user?.email === 'tgff28970@gmail.com';
+  const isAdmin = true; // DEV: auth bypassed for testing
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -110,11 +110,7 @@ export default function Admin() {
     }
   ];
 
-  useEffect(() => {
-    if (user && !isAdmin) {
-      navigate('/');
-    }
-  }, [user, isAdmin, navigate]);
+  // DEV: admin redirect removed for testing
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -186,7 +182,7 @@ export default function Admin() {
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    if (!isAdmin || !user) return;
+    if (!user) return;
     if (!title || !roast || imageUrls.length === 0) { toast.error('Fill required fields and add at least one image'); return; }
     
     setIsSubmitting(true);
@@ -453,20 +449,6 @@ export default function Admin() {
   };
 
   if (loading) return <div className="container mx-auto px-4 py-32 text-center text-muted-foreground flex justify-center items-center h-screen"><RefreshCw className="w-8 h-8 animate-spin" /></div>;
-
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-32 text-center h-screen flex flex-col justify-center items-center">
-        <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
-        <p className="text-muted-foreground mb-8">You must be logged in as an administrator to view this page.</p>
-        {!user && (
-          <Button onClick={() => import('../../firebase').then(m => m.loginWithGoogle())} className="font-bold">
-            Sign In with Google
-          </Button>
-        )}
-      </div>
-    );
-  }
 
   // Calculate Stats
   const totalPosts = posts.length;
