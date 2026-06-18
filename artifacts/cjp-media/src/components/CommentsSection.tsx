@@ -10,8 +10,6 @@ import { Link } from 'wouter';
 
 export default function CommentsSection({ postId, initialCommentsCount }: { postId: string, initialCommentsCount?: number }) {
   const [user] = useAuthState(auth);
-  const isAdmin = user?.email === 'tgff28970@gmail.com';
-  
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
 

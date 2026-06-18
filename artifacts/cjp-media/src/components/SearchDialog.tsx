@@ -16,12 +16,14 @@ export default function SearchDialog() {
   const [loading, setLoading] = useState(false);
   const [, navigate] = useLocation();
 
-  // Open search via hotkey (Cmd+K / Ctrl+K)
+  // Open search via hotkey (Cmd+K / Ctrl+K), close via ESC
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setIsOpen(true);
+      } else if (e.key === 'Escape') {
+        setIsOpen(false);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -144,7 +146,7 @@ export default function SearchDialog() {
                           <img 
                             src={post.imageUrls?.[0] || post.image || post.imageUrl || post.coverImage || 'https://picsum.photos/seed/placeholder/800/600'}
                             alt=""
-                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
