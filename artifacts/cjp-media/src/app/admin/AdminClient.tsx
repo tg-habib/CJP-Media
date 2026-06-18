@@ -10,7 +10,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs';
-import { ImagePlus, Trash2, Edit, X, RefreshCw, BarChart3, FileText, Settings, Heart, MessageSquare, PlusCircle, ExternalLink, User, Home, Users, BarChart2, MoreHorizontal, LayoutDashboard, Flag, Shield, Folder, Tag, ImageIcon, TrendingUp, Bell, Radio, UserCheck, PenTool, Database, ChevronRight, Menu, Flame } from 'lucide-react';
+import { ImagePlus, Trash2, Edit, X, RefreshCw, BarChart3, FileText, Settings, Heart, MessageSquare, PlusCircle, ExternalLink, User, Home, Users, BarChart2, MoreHorizontal, LayoutDashboard, Flag, Shield, Folder, Tag, ImageIcon, TrendingUp, Bell, Radio, UserCheck, PenTool, Database, ChevronRight, Menu, Flame, Camera, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Link } from 'wouter';
@@ -19,6 +19,110 @@ import { motion, AnimatePresence } from 'motion/react';
 import DashboardTab from './DashboardTab';
 
 const CATEGORIES = ["Trending", "Latest", "Economy Roasts", "Politics", "Memes", "Illustrations"];
+
+/* ─── Image position helpers ─── */
+const POSITIONS = [
+  ['left top',    'center top',    'right top'],
+  ['left center', 'center center', 'right center'],
+  ['left bottom', 'center bottom', 'right bottom'],
+] as const;
+
+function normalizePosition(p?: string): string {
+  const map: Record<string, string> = {
+    top: 'center top', bottom: 'center bottom',
+    left: 'left center', right: 'right center', center: 'center center',
+  };
+  return map[p || ''] ?? p ?? 'center center';
+}
+
+/* ─── Reusable image upload zone ─── */
+interface ImageUploadZoneProps {
+  label: string;
+  badge?: string;
+  hint?: string;
+  url: string;
+  isUploading: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onClear: () => void;
+  height?: string;
+  position?: string;
+  onPositionChange?: (v: string) => void;
+}
+
+function ImageUploadZone({
+  label, badge, hint, url, isUploading, onChange, onClear,
+  height = 'h-40', position, onPositionChange,
+}: ImageUploadZoneProps) {
+  const normalized = normalizePosition(position);
+  return (
+    <div className="space-y-2.5">
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-[10px] font-bold text-white/50 uppercase tracking-[0.14em]">{label}</span>
+        {badge && (
+          <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#ccff00]/10 text-[#ccff00]/60 font-bold tracking-wider">{badge}</span>
+        )}
+        {hint && <span className="text-[11px] text-white/20">{hint}</span>}
+      </div>
+      <div className="flex gap-3 items-start">
+        <div className={`flex-1 relative group rounded-xl overflow-hidden border transition-all cursor-pointer ${height} ${url ? 'border-white/[0.08]' : 'border-dashed border-white/[0.09] hover:border-[#ccff00]/30 bg-white/[0.02] hover:bg-[#ccff00]/[0.02]'}`}>
+          {url ? (
+            <>
+              <img src={url} alt={label} className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: normalized }} />
+              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-[12px] font-bold text-white bg-white/15 px-4 py-2 rounded-full backdrop-blur-sm border border-white/20">
+                  {isUploading ? 'Uploading…' : 'Change Image'}
+                </span>
+              </div>
+              {isUploading && (
+                <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
+                  <RefreshCw className="w-6 h-6 text-[#ccff00] animate-spin" />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+              {isUploading
+                ? <RefreshCw className="w-6 h-6 text-[#ccff00] animate-spin" />
+                : <>
+                    <ImagePlus className="w-6 h-6 text-white/15" />
+                    <span className="text-[11px] text-white/25 font-medium">Click or drag to upload</span>
+                  </>
+              }
+            </div>
+          )}
+          <input type="file" accept="image/*" onChange={onChange} disabled={isUploading} className="absolute inset-0 opacity-0 cursor-pointer" />
+        </div>
+
+        {(onPositionChange || url) && (
+          <div className="flex flex-col gap-2 shrink-0">
+            {onPositionChange && (
+              <div>
+                <p className="text-[9px] text-white/25 font-bold uppercase tracking-widest mb-1.5 text-center">Focus</p>
+                <div className="grid grid-cols-3 gap-0.5 p-1.5 bg-[#151515] rounded-xl border border-white/[0.06]">
+                  {POSITIONS.flat().map(pos => {
+                    const active = normalized === pos;
+                    return (
+                      <button key={pos} type="button" onClick={() => onPositionChange(pos)} title={pos}
+                        className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${active ? 'bg-[#ccff00]' : 'hover:bg-white/10'}`}>
+                        <div className={`w-2 h-2 rounded-full transition-colors ${active ? 'bg-black' : 'bg-white/20'}`} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {url && (
+              <button type="button" onClick={onClear}
+                className="px-3 py-1.5 rounded-lg bg-red-500/[0.08] hover:bg-red-500/[0.15] text-red-400/60 hover:text-red-400 text-[11px] font-semibold transition-all border border-red-500/[0.08] whitespace-nowrap">
+                Remove
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function Admin() {
   const [user, loading] = useAuthState(auth);
@@ -487,7 +591,7 @@ export default function Admin() {
             <div className="bg-[#151515] rounded-xl p-3 flex items-center justify-between border border-white/5 cursor-pointer hover:bg-white/10 transition" onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }}>
                <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden relative">
-                     <img src={profileAvatarUrl || '/placeholder.png'} alt="Admin" className="object-cover" />
+                     <img src={profileAvatarUrl || '/placeholder.png'} alt="Admin" className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-white leading-tight mb-0.5">Admin</p>
@@ -838,183 +942,223 @@ export default function Admin() {
                <AnimatePresence mode="wait">
                {activeTab === 'profile' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
-            <Card className="bg-black/40 border-white/10 backdrop-blur-md outline-none max-w-4xl mx-auto mt-4">
-              <CardHeader className="flex flex-row items-center justify-between pb-6 border-b border-white/5">
-                <div>
-                  <CardTitle className="text-2xl text-primary">Profile Management</CardTitle>
-                  <CardDescription>Control how CJP Media is presented to the public.</CardDescription>
-                </div>
-                <Button 
-                  onClick={handleSaveProfile} 
-                  disabled={isSavingProfile}
-                  className="bg-primary text-black font-bold hover:bg-primary/90 px-6"
-                >
-                  {isSavingProfile ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : null}
-                  Save Profile
-                </Button>
-              </CardHeader>
-              <CardContent className="pt-8 space-y-6">
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileName" className="text-sm text-muted-foreground font-semibold">Display Name</Label>
-                    <Input id="profileName" value={profileName} onChange={e => setProfileName(e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                  </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="profileHandle" className="text-sm text-muted-foreground font-semibold">Handle/Username</Label>
-                    <Input id="profileHandle" value={profileHandle} onChange={e => setProfileHandle(e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                  </div>
-                </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="profileBio" className="text-sm text-muted-foreground font-semibold">Bio</Label>
-                  <Textarea id="profileBio" value={profileBio} onChange={e => setProfileBio(e.target.value)} className="bg-white/5 border-white/10 h-24 resize-y" />
-                </div>
+            {/* ── Page header ── */}
+            <div className="flex items-start justify-between mb-7 gap-4">
+              <div>
+                <h1 className="text-[22px] font-black text-white tracking-tight">Media Profile</h1>
+                <p className="text-white/35 text-[13px] mt-0.5">Control how CJP Media is presented to the public</p>
+              </div>
+              <button
+                onClick={handleSaveProfile}
+                disabled={isSavingProfile}
+                className="flex items-center gap-2 px-6 py-2.5 bg-[#ccff00] text-black font-bold text-[13px] rounded-full hover:bg-white transition-all disabled:opacity-50 shadow-[0_0_24px_rgba(204,255,0,0.18)] shrink-0"
+              >
+                {isSavingProfile
+                  ? <RefreshCw className="w-4 h-4 animate-spin" />
+                  : <Save className="w-4 h-4" strokeWidth={2.5} />}
+                {isSavingProfile ? 'Saving…' : 'Save Changes'}
+              </button>
+            </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileLocation" className="text-sm text-muted-foreground font-semibold">Location</Label>
-                    <Input id="profileLocation" value={profileLocation} onChange={e => setProfileLocation(e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                  </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="profileUrl" className="text-sm text-muted-foreground font-semibold">Website URL</Label>
-                    <Input id="profileUrl" value={profileUrl} onChange={e => setProfileUrl(e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                  </div>
-                  <div className="space-y-3">
-                    <Label htmlFor="profileJoined" className="text-sm text-muted-foreground font-semibold">Joined Date Text</Label>
-                    <Input id="profileJoined" value={profileJoined} onChange={e => setProfileJoined(e.target.value)} className="bg-white/5 border-white/10 h-12" />
-                  </div>
-                </div>
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_316px] gap-5">
 
-                <div className="space-y-3">
-                  <Label htmlFor="profileFollowers" className="text-sm text-muted-foreground font-semibold">Followers Count Display Text</Label>
-                  <Input id="profileFollowers" value={profileFollowers} onChange={e => setProfileFollowers(e.target.value)} className="bg-white/5 border-white/10 h-12 max-w-xs" />
-                </div>
+              {/* ── LEFT: form sections ── */}
+              <div className="space-y-5">
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-white/5">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileAvatar" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
-                      <span>Avatar Image URL</span>
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input id="profileAvatar" value={profileAvatarUrl} onChange={e => setProfileAvatarUrl(e.target.value)} placeholder="Leave blank to use default Flame icon" className="bg-white/5 border-white/10 h-12 flex-1" />
-                      <div className="relative shrink-0">
-                         <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingAvatar}>
-                            {isUploadingAvatar ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-                         </Button>
-                         <input type="file" accept="image/*" onChange={handleAvatarUpload} disabled={isUploadingAvatar} className="absolute inset-0 opacity-0 cursor-pointer" />
+                {/* IDENTITY */}
+                <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl p-6">
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <div className="w-[3px] h-4 rounded-full bg-[#ccff00]" />
+                    <h3 className="font-bold text-white text-[14px] tracking-tight">Identity</h3>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-6">
+                    {/* Avatar */}
+                    <div className="flex flex-col items-center gap-2 shrink-0">
+                      <div className="relative group cursor-pointer">
+                        <div className="w-[88px] h-[88px] rounded-full overflow-hidden border-2 border-white/[0.08] bg-[#1a1a1a]">
+                          {profileAvatarUrl
+                            ? <img src={profileAvatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                            : <div className="w-full h-full flex items-center justify-center"><Flame className="w-8 h-8 text-[#ccff00]/30" /></div>
+                          }
+                        </div>
+                        <div className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                          {isUploadingAvatar
+                            ? <RefreshCw className="w-5 h-5 text-white animate-spin" />
+                            : <Camera className="w-5 h-5 text-white" />
+                          }
+                        </div>
+                        <input type="file" accept="image/*" onChange={handleAvatarUpload} disabled={isUploadingAvatar} className="absolute inset-0 opacity-0 cursor-pointer rounded-full" />
+                      </div>
+                      <span className="text-[10px] text-white/25 font-semibold uppercase tracking-wider">Avatar</span>
+                      {profileAvatarUrl && (
+                        <button type="button" onClick={() => setProfileAvatarUrl('')} className="text-[10px] text-red-400/50 hover:text-red-400 transition-colors">Remove</button>
+                      )}
+                    </div>
+                    {/* Fields */}
+                    <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="sm:col-span-2 space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/35 uppercase tracking-[0.14em]">Display Name</label>
+                        <input value={profileName} onChange={e => setProfileName(e.target.value)} placeholder="CJP Media"
+                          className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 h-11 text-white text-[14px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/35 uppercase tracking-[0.14em]">Handle</label>
+                        <input value={profileHandle} onChange={e => setProfileHandle(e.target.value)} placeholder="@cjpmedia"
+                          className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 h-11 text-white text-[14px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all" />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/35 uppercase tracking-[0.14em]">Followers Display</label>
+                        <input value={profileFollowers} onChange={e => setProfileFollowers(e.target.value)} placeholder="127K"
+                          className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 h-11 text-white text-[14px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all" />
+                      </div>
+                      <div className="sm:col-span-2 space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/35 uppercase tracking-[0.14em]">Bio</label>
+                        <textarea value={profileBio} onChange={e => setProfileBio(e.target.value)} rows={3} placeholder="We speak for the ignored…"
+                          className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 py-3 text-white text-[14px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all resize-none" />
                       </div>
                     </div>
-                    {profileAvatarUrl && (
-                      <div className="mt-2 w-16 h-16 rounded-full border border-white/20 overflow-hidden relative">
-                        <img src={profileAvatarUrl} alt="Avatar" className="object-cover" />
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-3">
-                    <Label htmlFor="profileCover" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
-                      <span>Cover Image URL</span>
-                    </Label>
-                    <div className="flex gap-2">
-                       <Input id="profileCover" value={profileCoverUrl} onChange={e => setProfileCoverUrl(e.target.value)} placeholder="Leave blank to use default background" className="bg-white/5 border-white/10 h-12 flex-1" />
-                       <div className="relative shrink-0">
-                          <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingCover}>
-                             {isUploadingCover ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-                          </Button>
-                          <input type="file" accept="image/*" onChange={handleCoverUpload} disabled={isUploadingCover} className="absolute inset-0 opacity-0 cursor-pointer" />
-                       </div>
-                    </div>
-                    {profileCoverUrl && (
-                      <div className="mt-2 w-full h-24 rounded-lg border border-white/20 overflow-hidden relative">
-                        <img src={profileCoverUrl} alt="Cover" className="object-cover" />
-                      </div>
-                    )}
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileHero" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
-                      <span>Home Hero Image URL</span>
-                    </Label>
-                    <div className="flex gap-2">
-                       <Input id="profileHero" value={profileHeroUrl} onChange={e => setProfileHeroUrl(e.target.value)} placeholder="Leave blank to use default /hero.png" className="bg-white/5 border-white/10 h-12 flex-1" />
-                       <select value={profileHeroPosition} onChange={e => setProfileHeroPosition(e.target.value)} className="bg-white/5 border-white/10 rounded-md px-3 text-white">
-                           <option value="center">Center</option>
-                           <option value="top">Top</option>
-                           <option value="bottom">Bottom</option>
-                           <option value="left">Left</option>
-                           <option value="right">Right</option>
-                       </select>
-                       <div className="relative shrink-0">
-                          <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingHero}>
-                             {isUploadingHero ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-                          </Button>
-                          <input type="file" accept="image/*" onChange={handleHeroUpload} disabled={isUploadingHero} className="absolute inset-0 opacity-0 cursor-pointer" />
-                       </div>
-                    </div>
-                    {profileHeroUrl && (
-                      <div className="mt-2 w-full h-48 rounded-lg border border-white/20 overflow-hidden relative">
-                        <img src={profileHeroUrl} alt="Hero" style={{ objectPosition: profileHeroPosition }} className="object-cover" />
+                {/* PRESENCE */}
+                <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl p-6">
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <div className="w-[3px] h-4 rounded-full bg-[#1d9bf0]" />
+                    <h3 className="font-bold text-white text-[14px] tracking-tight">Presence</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                      { label: 'Location', value: profileLocation, setter: (v: string) => setProfileLocation(v), placeholder: 'New Delhi, India' },
+                      { label: 'Website URL', value: profileUrl, setter: (v: string) => setProfileUrl(v), placeholder: 'cjpmedia.in' },
+                      { label: 'Joined Date', value: profileJoined, setter: (v: string) => setProfileJoined(v), placeholder: 'Jan 2024' },
+                    ].map(({ label, value, setter, placeholder }) => (
+                      <div key={label} className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-white/35 uppercase tracking-[0.14em]">{label}</label>
+                        <input value={value} onChange={e => setter(e.target.value)} placeholder={placeholder}
+                          className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 h-11 text-white text-[14px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all" />
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileMobileHero" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
-                      <span>Mobile Hero Image URL</span>
-                    </Label>
-                    <div className="flex gap-2">
-                       <Input id="profileMobileHero" value={profileMobileHeroUrl} onChange={e => setProfileMobileHeroUrl(e.target.value)} placeholder="Leave blank to fallback to Desktop Hero" className="bg-white/5 border-white/10 h-12 flex-1" />
-                       <select value={profileMobileHeroPosition} onChange={e => setProfileMobileHeroPosition(e.target.value)} className="bg-white/5 border-white/10 rounded-md px-3 text-white">
-                           <option value="center">Center</option>
-                           <option value="top">Top</option>
-                           <option value="bottom">Bottom</option>
-                           <option value="left">Left</option>
-                           <option value="right">Right</option>
-                       </select>
-                       <div className="relative shrink-0">
-                          <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingMobileHero}>
-                             {isUploadingMobileHero ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-                          </Button>
-                          <input type="file" accept="image/*" onChange={handleMobileHeroUpload} disabled={isUploadingMobileHero} className="absolute inset-0 opacity-0 cursor-pointer" />
-                       </div>
+                {/* MEDIA ASSETS */}
+                <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl p-6">
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <div className="w-[3px] h-4 rounded-full bg-[#a855f7]" />
+                    <h3 className="font-bold text-white text-[14px] tracking-tight">Media Assets</h3>
+                    <span className="text-[11px] text-white/20 font-medium">· Images used across the site</span>
+                  </div>
+                  <div className="space-y-6">
+
+                    <ImageUploadZone
+                      label="Desktop Hero Image" badge="Homepage" hint="· Main banner on desktop screens"
+                      url={profileHeroUrl} isUploading={isUploadingHero}
+                      onChange={handleHeroUpload} onClear={() => setProfileHeroUrl('')}
+                      height="h-44" position={profileHeroPosition} onPositionChange={setProfileHeroPosition}
+                    />
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <ImageUploadZone
+                        label="Mobile Hero Image" badge="Mobile" hint="· Falls back to desktop hero"
+                        url={profileMobileHeroUrl} isUploading={isUploadingMobileHero}
+                        onChange={handleMobileHeroUpload} onClear={() => setProfileMobileHeroUrl('')}
+                        height="h-36" position={profileMobileHeroPosition} onPositionChange={setProfileMobileHeroPosition}
+                      />
+                      <ImageUploadZone
+                        label="Cover Image" badge="Profile page" hint="· Profile banner"
+                        url={profileCoverUrl} isUploading={isUploadingCover}
+                        onChange={handleCoverUpload} onClear={() => setProfileCoverUrl('')}
+                        height="h-36"
+                      />
                     </div>
-                    {profileMobileHeroUrl && (
-                      <div className="mt-2 w-full h-48 sm:w-1/2 rounded-lg border border-white/20 overflow-hidden relative">
-                        <img src={profileMobileHeroUrl} alt="Mobile Hero" style={{ objectPosition: profileMobileHeroPosition }} className="object-cover" />
-                      </div>
-                    )}
+
+                    <ImageUploadZone
+                      label="Footer Mascot" badge="Footer" hint="· Character shown in the footer"
+                      url={profileFooterUrl} isUploading={isUploadingFooter}
+                      onChange={handleFooterUpload} onClear={() => setProfileFooterUrl('')}
+                      height="h-40"
+                    />
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-white/5">
-                  <div className="space-y-3">
-                    <Label htmlFor="profileFooter" className="text-sm text-muted-foreground font-semibold flex items-center justify-between">
-                      <span>Footer Mascot Image URL</span>
-                    </Label>
-                    <div className="flex gap-2">
-                       <Input id="profileFooter" value={profileFooterUrl} onChange={e => setProfileFooterUrl(e.target.value)} placeholder="Leave blank to disable" className="bg-white/5 border-white/10 h-12 flex-1" />
-                       <div className="relative shrink-0">
-                          <Button type="button" variant="outline" className="h-12 w-12 p-0 border-white/10" disabled={isUploadingFooter}>
-                             {isUploadingFooter ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4" />}
-                          </Button>
-                          <input type="file" accept="image/*" onChange={handleFooterUpload} disabled={isUploadingFooter} className="absolute inset-0 opacity-0 cursor-pointer" />
-                       </div>
+              </div>{/* end LEFT */}
+
+              {/* ── RIGHT: Live Preview ── */}
+              <div className="xl:sticky xl:top-6 xl:self-start space-y-4">
+                <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl overflow-hidden">
+                  <div className="flex items-center gap-2 px-5 py-3.5 border-b border-white/[0.05]">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#ccff00] animate-pulse" />
+                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.14em]">Live Preview</span>
+                  </div>
+
+                  {/* Cover */}
+                  <div className="relative h-[100px] bg-gradient-to-br from-[#111] to-[#181818]">
+                    {profileCoverUrl
+                      ? <img src={profileCoverUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                      : <div className="absolute inset-0 bg-gradient-to-br from-[#ccff00]/5 to-transparent" />
+                    }
+                    {/* Avatar overlap */}
+                    <div className="absolute -bottom-7 left-5 w-[56px] h-[56px] rounded-full border-4 border-[#0c0c0c] overflow-hidden bg-[#1a1a1a] shadow-lg">
+                      {profileAvatarUrl
+                        ? <img src={profileAvatarUrl} alt="" className="w-full h-full object-cover" />
+                        : <div className="w-full h-full flex items-center justify-center bg-[#ccff00]/10"><Flame className="w-5 h-5 text-[#ccff00]" /></div>
+                      }
                     </div>
-                    {profileFooterUrl && (
-                      <div className="mt-2 w-full h-48 sm:w-1/2 rounded-lg border border-white/20 overflow-hidden relative">
-                        <img src={profileFooterUrl} alt="Footer Mascot" className="object-cover" />
-                      </div>
+                  </div>
+
+                  {/* Info */}
+                  <div className="px-5 pt-10 pb-5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-black text-white text-[15px] tracking-tight">{profileName || 'CJP Media'}</span>
+                      {/* verified badge */}
+                      <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 22 22" fill="none">
+                        <path d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.438 1.69-.882.445-.47.749-1.055.878-1.688.13-.633.08-1.29-.144-1.896.587-.274 1.087-.705 1.443-1.245.356-.54.555-1.17.574-1.816zm-9.224 4.185l-3.6-3.6 1.06-1.06 2.54 2.54 4.605-4.605 1.06 1.06-5.665 5.665z" fill="#ccff00"/>
+                      </svg>
+                    </div>
+                    <p className="text-[#ccff00]/60 text-[11px] font-medium mt-0.5">{profileHandle || '@cjpmedia'}</p>
+                    {profileBio && (
+                      <p className="text-white/40 text-[11px] leading-relaxed mt-2 line-clamp-2">{profileBio}</p>
                     )}
+                    <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-2.5 text-white/30 text-[10px]">
+                      {profileLocation && <span>📍 {profileLocation}</span>}
+                      {profileUrl && <span className="text-[#ccff00]/50">{profileUrl}</span>}
+                      {profileJoined && <span>Joined {profileJoined}</span>}
+                    </div>
+                    <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/[0.05] text-[11px]">
+                      <div>
+                        <span className="font-black text-white text-[13px] tabular-nums">{profileFollowers || '—'}</span>
+                        <span className="text-white/30 ml-1">Followers</span>
+                      </div>
+                      <div>
+                        <span className="font-black text-white text-[13px] tabular-nums">{posts.length}</span>
+                        <span className="text-white/30 ml-1">Posts</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-              </CardContent>
-            </Card>
+                {/* Hero thumbnail */}
+                {profileHeroUrl && (
+                  <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-2 px-5 py-3 border-b border-white/[0.05]">
+                      <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.14em]">Hero Preview</span>
+                    </div>
+                    <div className="relative h-28 overflow-hidden">
+                      <img src={profileHeroUrl} alt="Hero" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: normalizePosition(profileHeroPosition) }} />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end px-4 pb-3">
+                        <span className="text-white text-[11px] font-bold opacity-70">Desktop Hero</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <p className="text-[11px] text-white/20 text-center leading-relaxed px-3">
+                  Preview updates live. Changes go live after saving.
+                </p>
+              </div>
+
+            </div>
           </motion.div>
                )}
                </AnimatePresence>
