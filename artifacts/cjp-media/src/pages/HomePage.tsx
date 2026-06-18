@@ -263,18 +263,18 @@ export default function HomePage() {
         <Header settings={profileSettings} />
 
         {/* ── TICKER ── */}
-        <div className="w-full bg-[#070707] border-b border-white/[0.04] h-9 flex items-center overflow-hidden">
-          <div className="shrink-0 bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.2em] px-4 h-full flex items-center gap-1.5 z-10 whitespace-nowrap select-none">
+        <div className="w-full bg-black border-b border-white/[0.05] h-9 flex items-center overflow-hidden shrink-0">
+          <div className="shrink-0 bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.22em] px-4 h-full flex items-center gap-1.5 z-10 whitespace-nowrap select-none">
             <Radio className="w-3 h-3" strokeWidth={2.5} aria-hidden="true" /> LIVE
           </div>
           <div className="flex-1 overflow-hidden relative">
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#070707] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none" />
             <div className="flex animate-marquee whitespace-nowrap">
               {[0, 1].map(i => (
-                <div key={i} className="flex items-center gap-8 text-white/30 text-[11px] font-medium px-5 shrink-0">
+                <div key={i} className="flex items-center gap-8 text-white/28 text-[11px] font-medium px-6 shrink-0">
                   {tickerEntries.map((text, idx) => (
                     <span key={idx} className="flex items-center gap-2.5 shrink-0">
-                      <span className="w-[4px] h-[4px] rounded-full bg-[#ccff00]/60 shrink-0" />
+                      <span className="w-[3px] h-[3px] rounded-full bg-[#ccff00]/50 shrink-0" aria-hidden="true" />
                       {text}
                     </span>
                   ))}
@@ -284,168 +284,188 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ── HERO ── */}
-        <section className="relative w-full overflow-hidden pt-10 sm:pt-14 pb-10">
-          {/* ambient glows */}
-          <div className="absolute top-0 right-0 w-[700px] h-[500px] bg-[#ccff00]/[0.028] rounded-full blur-[140px] translate-x-1/3 -translate-y-1/4 pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-[500px] h-[400px] bg-[#ff4500]/[0.018] rounded-full blur-[120px] -translate-x-1/4 pointer-events-none" />
+        {/* ── CINEMATIC HERO ── */}
+        <section
+          className="relative w-full overflow-hidden flex flex-col"
+          style={{ minHeight: 'max(88vh, 580px)' }}
+          aria-label="Hero"
+        >
+          {/* ── Background image (featured post) ── */}
+          {featured && getImg(featured) ? (
+            <img
+              src={getImg(featured)}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            /* fallback dark glow when no post image */
+            <>
+              <div className="absolute top-0 right-0 w-[900px] h-[700px] bg-[#ccff00]/[0.055] rounded-full blur-[200px] translate-x-1/3 -translate-y-1/4 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-[600px] h-[500px] bg-[#ff4500]/[0.035] rounded-full blur-[160px] -translate-x-1/4 pointer-events-none" />
+            </>
+          )}
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.1fr] gap-10 lg:gap-16 items-center">
+          {/* ── Gradient overlays ── */}
+          {/* Top fade — keeps header legible */}
+          <div
+            className="absolute inset-x-0 top-0 pointer-events-none"
+            style={{ height: '45%', background: 'linear-gradient(to bottom, rgba(5,5,5,0.88) 0%, rgba(5,5,5,0.4) 55%, transparent 100%)' }}
+          />
+          {/* Bottom fade — content area */}
+          <div
+            className="absolute inset-x-0 bottom-0 pointer-events-none"
+            style={{ height: '75%', background: 'linear-gradient(to top, #050505 0%, #050505 18%, rgba(5,5,5,0.94) 35%, rgba(5,5,5,0.6) 55%, transparent 100%)' }}
+          />
+          {/* Side vignettes */}
+          <div className="absolute inset-y-0 left-0 w-[30%] pointer-events-none" style={{ background: 'linear-gradient(to right, rgba(5,5,5,0.55) 0%, transparent 100%)' }} />
 
-              {/* ── Left: copy ── */}
-              <div className="flex flex-col items-start">
+          {/* ── Content ── */}
+          <div className="relative z-10 flex flex-col flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{ minHeight: 'inherit' }}>
 
-                {/* live pill */}
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.07] mb-7 select-none">
-                  <span className="relative flex h-1.5 w-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-60" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ccff00]" />
-                  </span>
-                  <span className="text-white/45 text-[11px] font-semibold uppercase tracking-[0.18em]">
-                    {latestPosts.length > 0 ? `${latestPosts.length} Stories Live` : "Voice of the Majority"}
-                  </span>
-                </div>
+            {/* Top bar: live pill + stats pill */}
+            <div className="flex items-center justify-between pt-8 sm:pt-10">
+              {/* Live / stories pill */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.08] select-none">
+                <span className="relative flex h-1.5 w-1.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ccff00] opacity-70" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#ccff00]" />
+                </span>
+                <span className="text-white/55 text-[11px] font-bold uppercase tracking-[0.16em]">
+                  {latestPosts.length > 0 ? `${latestPosts.length} Stories Live` : "CJP Media Live"}
+                </span>
+              </div>
 
-                {/* headline */}
-                <h1 className="text-[52px] sm:text-[68px] lg:text-[80px] font-black text-white tracking-[-3px] leading-[0.87] mb-6">
-                  Voice<br />of the<br /><span className="text-[#ccff00]">Real<br />Majority.</span>
-                </h1>
+              {/* Stats pill — desktop only */}
+              <div className="hidden lg:flex items-center divide-x divide-white/[0.08] bg-black/40 backdrop-blur-md border border-white/[0.07] rounded-full px-5 py-2.5 gap-0">
+                {[
+                  { value: totalViews  > 0 ? fmtNum(totalViews)       : "—", label: "Views" },
+                  { value: totalReactions > 0 ? fmtNum(totalReactions) : "—", label: "Reactions", accent: true },
+                  { value: "12.7K+", label: "Supporters" },
+                ].map((s, i) => (
+                  <div key={i} className="flex items-center gap-2 px-4">
+                    <span className={`font-black text-[14px] tabular-nums leading-none ${s.accent ? "text-[#ccff00]" : "text-white"}`}>{s.value}</span>
+                    <span className="text-white/28 text-[10px] font-semibold">{s.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-                {/* tagline */}
-                <p className="text-[13px] sm:text-[14px] text-white/35 max-w-[360px] leading-[1.95] mb-8">
-                  The official media wing of the Cockroach Janta Party — unfiltered satire, roasts, and the news they don't want you to see.
+            {/* Spacer — pushes headline down */}
+            <div className="flex-1" />
+
+            {/* ── Main headline block ── */}
+            <div className="pb-5 sm:pb-7">
+
+              {/* editorial label */}
+              <div className="flex items-center gap-3 mb-5">
+                <div className="h-px w-10 bg-[#ccff00]/55" aria-hidden="true" />
+                <span className="text-[#ccff00]/55 text-[10px] font-black uppercase tracking-[0.24em]">CJP Media · Official</span>
+              </div>
+
+              {/* Headline */}
+              <h1
+                className="font-black text-white leading-[0.86] tracking-[-3px] mb-6 sm:mb-7"
+                style={{ fontSize: 'clamp(56px, 10vw, 108px)' }}
+              >
+                Voice<br />of the<br />
+                <span
+                  className="text-[#ccff00]"
+                  style={{ textShadow: '0 0 120px rgba(204,255,0,0.2)' }}
+                >
+                  Real<br />Majority.
+                </span>
+              </h1>
+
+              {/* Tagline + CTAs row */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-10">
+                <p className="text-white/32 text-[13px] sm:text-[14px] max-w-[300px] leading-[1.9] shrink-0">
+                  Unfiltered satire, roasts, and the&nbsp;news they don't want you to see.
                 </p>
-
-                {/* CTAs */}
-                <div className="flex items-center gap-3 flex-wrap mb-9">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   <Link
                     href="/feed"
-                    className="group inline-flex items-center gap-2 px-6 py-3 bg-[#ccff00] text-black font-black text-[13px] rounded-full hover:bg-white transition-all shadow-[0_0_32px_rgba(204,255,0,0.25)] active:scale-[0.97]"
+                    className="group inline-flex items-center gap-2 px-6 py-2.5 bg-[#ccff00] text-black font-black text-[13px] rounded-full hover:bg-white transition-all shadow-[0_0_40px_rgba(204,255,0,0.28)] active:scale-[0.97]"
                   >
                     Enter the Feed
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
                   </Link>
                   <Link
                     href="/category/Trending"
-                    className="inline-flex items-center gap-2 px-5 py-3 border border-white/[0.1] text-white/50 font-semibold text-[13px] rounded-full hover:bg-white/[0.05] hover:border-white/[0.2] hover:text-white/80 transition-all active:scale-[0.97]"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/[0.07] backdrop-blur-sm border border-white/[0.12] text-white/65 font-semibold text-[13px] rounded-full hover:bg-white/[0.12] hover:text-white/90 transition-all active:scale-[0.97]"
                   >
                     <TrendingUp className="w-3.5 h-3.5 text-[#ff4500]" strokeWidth={2} aria-hidden="true" />
                     Trending
                   </Link>
                 </div>
-
-                {/* stats strip */}
-                <div className="grid grid-cols-4 gap-4 pt-6 border-t border-white/[0.05] w-full">
-                  {[
-                    { value: latestPosts.length || "—", label: "Stories" },
-                    { value: totalViews  > 0 ? fmtNum(totalViews) : "—",       label: "Views" },
-                    { value: totalReactions > 0 ? fmtNum(totalReactions) : "—", label: "Reactions", accent: true },
-                    { value: "12.7K+",  label: "Supporters" },
-                  ].map((s, i) => (
-                    <div key={i} className="flex flex-col gap-1">
-                      <span className={`font-black text-[20px] sm:text-[22px] leading-none tabular-nums ${s.accent ? "text-[#ccff00]" : "text-white"}`}>
-                        {s.value}
-                      </span>
-                      <span className="text-white/22 text-[10px] font-semibold uppercase tracking-[0.1em]">{s.label}</span>
-                    </div>
-                  ))}
-                </div>
               </div>
-
-              {/* ── Right: featured post card ── */}
-              <div className="hidden lg:block">
-                {featured ? (
-                  <Link
-                    href={`/post/${featured.id}`}
-                    className="group block relative rounded-3xl overflow-hidden border border-white/[0.07] hover:border-white/[0.22] transition-all duration-500 shadow-[0_32px_80px_rgba(0,0,0,0.65)]"
-                    style={{ height: 520 }}
-                  >
-                    {getImg(featured) ? (
-                      <img
-                        src={getImg(featured)}
-                        alt={featured.title}
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-[#0d0d0d] flex items-center justify-center">
-                        <Flame className="w-12 h-12 text-[#ccff00]/10" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.48) 42%, rgba(0,0,0,0.04) 100%)" }} />
-
-                    {/* top badges */}
-                    <div className="absolute top-5 left-5 flex gap-2 z-10">
-                      <span className="bg-[#ccff00] text-black text-[10px] font-black uppercase tracking-[0.14em] px-3 py-1.5 rounded-full">
-                        Featured
-                      </span>
-                      {featured.category && (
-                        <span className="bg-black/55 backdrop-blur-sm border border-white/[0.1] text-white/55 text-[10px] font-semibold uppercase tracking-[0.1em] px-3 py-1.5 rounded-full">
-                          {featured.category}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* bottom info */}
-                    <div className="absolute bottom-0 left-0 right-0 p-7 z-10">
-                      <div className="flex items-center gap-2 mb-3">
-                        {profileSettings?.avatarUrl ? (
-                          <img src={profileSettings.avatarUrl} alt={profileSettings?.name || "CJP Media"} className="w-5 h-5 rounded-full object-cover border border-white/10" />
-                        ) : (
-                          <div className="w-5 h-5 rounded-full bg-[#ccff00]/10 flex items-center justify-center border border-[#ccff00]/20">
-                            <Flame className="w-2.5 h-2.5 text-[#ccff00]" />
-                          </div>
-                        )}
-                        <span className="text-white/40 text-[11px] font-medium flex items-center gap-1">
-                          {profileSettings?.name || "CJP Media"}
-                          <VerifiedBadge className="w-3 h-3" />
-                        </span>
-                      </div>
-                      <h3 className="text-white font-black text-[22px] leading-[1.18] mb-4 group-hover:text-[#ccff00] transition-colors duration-300 line-clamp-3">
-                        {featured.title}
-                      </h3>
-                      <div className="flex items-center gap-4 text-white/28 text-[11px] font-medium">
-                        <span className="flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" />{fmtNum(featured.viewsCount || 0)}</span>
-                        <span className="flex items-center gap-1.5"><Flame className="w-3.5 h-3.5 text-[#ff4500]" />{fmtNum(featured.reactionsCount || 0)}</span>
-                        <span className="flex items-center gap-1.5"><MessageCircle className="w-3.5 h-3.5" />{featured.commentsCount || 0}</span>
-                        <span className="ml-auto flex items-center gap-1 text-white/20"><Clock className="w-3 h-3" />{ago(featured.createdAt)}</span>
-                      </div>
-                    </div>
-                  </Link>
-                ) : !loading ? (
-                  <div className="rounded-3xl bg-[#0a0a0a] border border-white/[0.04] flex items-center justify-center" style={{ height: 520 }}>
-                    <Newspaper className="w-9 h-9 text-white/[0.04]" strokeWidth={1.5} />
-                  </div>
-                ) : (
-                  <div className="rounded-3xl bg-[#0a0a0a] border border-white/[0.04] animate-pulse" style={{ height: 520 }} />
-                )}
-              </div>
-
             </div>
-          </div>
-        </section>
 
-        {/* ── CATEGORIES ── */}
-        <div className="border-y border-white/[0.04] bg-[#030303]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
-            <div className="relative">
-              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#030303] to-transparent z-10 pointer-events-none" />
-              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1 pb-0.5">
+            {/* ── Featured article "lower third" bar ── */}
+            {featured ? (
+              <Link
+                href={`/post/${featured.id}`}
+                className="group flex items-center gap-3 sm:gap-4 mt-3 mb-0 bg-black/55 backdrop-blur-md border border-white/[0.08] hover:border-[#ccff00]/25 rounded-xl px-4 py-3.5 transition-all"
+                aria-label={`Featured: ${featured.title}`}
+              >
+                {/* thumbnail */}
+                {getImg(featured) && (
+                  <div className="w-12 h-10 rounded-lg overflow-hidden shrink-0 hidden sm:block">
+                    <img src={getImg(featured)} alt="" aria-hidden="true" className="w-full h-full object-cover" />
+                  </div>
+                )}
+
+                {/* label */}
+                <span className="shrink-0 bg-[#ccff00] text-black text-[9px] font-black uppercase tracking-[0.16em] px-2.5 py-1 rounded-md">
+                  Featured
+                </span>
+                {featured.category && (
+                  <span className="shrink-0 text-white/30 text-[10px] font-bold uppercase tracking-[0.1em] hidden sm:block">
+                    {featured.category}
+                  </span>
+                )}
+
+                {/* title */}
+                <h2 className="flex-1 text-white font-bold text-[13px] sm:text-[14px] line-clamp-1 group-hover:text-[#ccff00] transition-colors min-w-0">
+                  {featured.title}
+                </h2>
+
+                {/* meta */}
+                <div className="hidden sm:flex items-center gap-3 text-white/25 text-[11px] shrink-0">
+                  <span className="flex items-center gap-1"><Eye className="w-3 h-3" aria-hidden="true" />{fmtNum(featured.viewsCount || 0)}</span>
+                  <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-[#ff4500]" aria-hidden="true" />{fmtNum(featured.reactionsCount || 0)}</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" aria-hidden="true" />{ago(featured.createdAt)}</span>
+                </div>
+
+                <ArrowUpRight className="w-4 h-4 text-white/20 group-hover:text-[#ccff00]/70 transition-colors shrink-0" aria-hidden="true" />
+              </Link>
+            ) : loading ? (
+              <div className="h-14 rounded-xl bg-white/[0.03] animate-pulse mt-3" />
+            ) : null}
+
+            {/* ── Category pills ── */}
+            <div className="relative mt-4 mb-0">
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
+              <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-6 pt-1 -mx-1 px-1">
                 {CATEGORIES.map(({ href, label, Icon, color, bg }) => (
                   <Link
                     key={href}
                     href={href}
-                    className="group inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-transparent hover:border-white/[0.1] transition-all whitespace-nowrap shrink-0"
+                    className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full backdrop-blur-sm border border-white/[0.1] hover:border-white/[0.2] transition-all whitespace-nowrap shrink-0"
                     style={{ backgroundColor: bg }}
                   >
                     <Icon className="w-3.5 h-3.5 shrink-0" style={{ color }} strokeWidth={2} aria-hidden="true" />
-                    <span className="text-white/60 group-hover:text-white/90 text-[12px] font-bold transition-colors">{label}</span>
+                    <span className="text-white/65 group-hover:text-white text-[12px] font-bold transition-colors">{label}</span>
                   </Link>
                 ))}
               </div>
             </div>
+
           </div>
-        </div>
+        </section>
+
+        {/* thin separator between hero and content */}
+        <div className="w-full h-px bg-white/[0.04]" />
 
         {/* ── LATEST STORIES ── */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-9 pb-9 w-full">
