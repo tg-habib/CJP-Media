@@ -129,7 +129,8 @@ function ImageUploadZone({
 export default function Admin() {
   const [user, loading] = useAuthState(auth);
   const [, navigate] = useLocation();
-  const isAdmin = true; // DEV: auth bypassed for testing
+  const ADMIN_EMAIL = 'tgff28970@gmail.com';
+  const isAdmin = !loading && !!user && user.email === ADMIN_EMAIL;
 
   const [activeTab, setActiveTab] = useState('dashboard');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -218,7 +219,9 @@ export default function Admin() {
     }
   ];
 
-  // DEV: admin redirect removed for testing
+  useEffect(() => {
+    if (!loading && !isAdmin) navigate('/');
+  }, [loading, isAdmin, navigate]);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -590,62 +593,77 @@ export default function Admin() {
                  <p className="text-[10px] text-[#ccff00] font-medium leading-tight">Admin Panel</p>
                </div>
             </div>
-            <button className="lg:hidden text-white/50 hover:text-white" onClick={() => setIsMobileMenuOpen(false)}>
-               <X className="w-5 h-5" />
+            <button
+              className="lg:hidden text-white/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ccff00]/60 rounded-lg p-1"
+              onClick={() => setIsMobileMenuOpen(false)}
+              aria-label="Close navigation menu"
+            >
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
          </div>
 
          <div className="px-4 mb-4">
-            <div className="bg-[#151515] rounded-xl p-3 flex items-center justify-between border border-white/5 cursor-pointer hover:bg-white/10 transition" onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }}>
+            <button
+              className="w-full bg-[#151515] rounded-xl p-3 flex items-center justify-between border border-white/5 hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ccff00]/60"
+              onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }}
+              aria-label="Edit admin profile"
+            >
                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-white/10 overflow-hidden relative">
-                     <img src={profileAvatarUrl || '/placeholder.png'} alt="Admin" className="w-full h-full object-cover" />
+                  <div className="w-10 h-10 rounded-full bg-[#ccff00]/10 border border-[#ccff00]/20 overflow-hidden relative flex items-center justify-center shrink-0">
+                     {profileAvatarUrl
+                       ? <img src={profileAvatarUrl} alt="" className="w-full h-full object-cover" />
+                       : <Flame className="w-5 h-5 text-[#ccff00]" aria-hidden="true" />
+                     }
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-white leading-tight mb-0.5">Admin</p>
+                  <div className="text-left">
+                    <p className="text-sm font-bold text-white leading-tight mb-0.5">{user?.displayName || 'Admin'}</p>
                     <div className="flex items-center gap-1 text-[10px] text-[#ccff00]">
-                       <span className="w-2 h-2 rounded-full bg-[#ccff00]" />
+                       <span className="w-2 h-2 rounded-full bg-[#ccff00]" aria-hidden="true" />
                        Super Admin
                     </div>
                   </div>
                </div>
-               <ChevronRight className="w-4 h-4 text-white/40" />
-            </div>
+               <ChevronRight className="w-4 h-4 text-white/40" aria-hidden="true" />
+            </button>
          </div>
 
-         <div className="flex-1 overflow-y-auto pt-2 pb-6 px-3 scrollbar-hide space-y-6">
+         <nav className="flex-1 overflow-y-auto pt-2 pb-6 px-3 scrollbar-hide space-y-6" aria-label="Admin navigation">
             {navGroups.map((group, i) => (
               <div key={i} className="mb-2">
-                 <p className="px-3 text-[10px] font-bold text-white/30 uppercase tracking-wider mb-2">{group.title}</p>
-                 <div className="space-y-1">
+                 <p className="px-3 text-[10px] font-bold text-white/30 uppercase tracking-wider mb-2" aria-hidden="true">{group.title}</p>
+                 <ul className="space-y-1" role="list">
                     {group.items.map(item => {
                        const Icon = item.icon;
                        const isActive = activeTab === item.id;
                        return (
-                         <button 
-                           key={item.id}
-                           onClick={() => {
-                              if (!item.soon) {
-                                setActiveTab(item.id);
-                                setIsMobileMenuOpen(false);
-                              }
-                           }}
-                           className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${isActive ? 'bg-[#ccff00]/10 text-[#ccff00]' : 'text-white/60 hover:text-white hover:bg-white/5'} ${item.soon ? 'cursor-default opacity-50' : ''}`}
-                         >
-                           <div className="flex items-center gap-3">
-                              <Icon className="w-[18px] h-[18px]" strokeWidth={isActive ? 2.5 : 2} />
-                              <span className={`text-sm ${isActive ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
-                           </div>
-                           {item.soon && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-semibold tracking-wider">SOON</span>
-                           )}
-                         </button>
+                         <li key={item.id}>
+                           <button
+                             onClick={() => {
+                               if (!item.soon) {
+                                 setActiveTab(item.id);
+                                 setIsMobileMenuOpen(false);
+                               }
+                             }}
+                             aria-current={isActive ? 'page' : undefined}
+                             aria-disabled={item.soon ? 'true' : undefined}
+                             disabled={!!item.soon}
+                             className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ccff00]/60 ${isActive ? 'bg-[#ccff00]/10 text-[#ccff00]' : 'text-white/60 hover:text-white hover:bg-white/5'} ${item.soon ? 'cursor-default opacity-50' : ''}`}
+                           >
+                             <div className="flex items-center gap-3">
+                               <Icon className="w-[18px] h-[18px]" strokeWidth={isActive ? 2.5 : 2} aria-hidden="true" />
+                               <span className={`text-sm ${isActive ? 'font-semibold' : 'font-medium'}`}>{item.label}</span>
+                             </div>
+                             {item.soon && (
+                               <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-white/40 font-semibold tracking-wider" aria-label="coming soon">SOON</span>
+                             )}
+                           </button>
+                         </li>
                        );
                     })}
-                 </div>
+                 </ul>
               </div>
             ))}
-         </div>
+         </nav>
 
          {/* System Status */}
          <div className="p-4 border-t border-white/5">

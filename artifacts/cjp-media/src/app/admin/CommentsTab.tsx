@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   collection, onSnapshot, query, orderBy, limit,
-  deleteDoc, doc, updateDoc, collectionGroup, getDocs, getDoc
+  deleteDoc, doc, updateDoc
 } from 'firebase/firestore';
 import { db } from '../../firebase';
 import {
   MessageSquare, Trash2, CheckCircle, XCircle, Search,
-  RefreshCw, Filter, X, ChevronDown, Eye, ExternalLink,
-  Flag, AlertTriangle, ThumbsUp, ArrowUpDown, User
+  RefreshCw, X, ChevronDown, Eye, ExternalLink,
+  ArrowUpDown, User
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
@@ -47,6 +47,18 @@ export default function CommentsTab({ posts, setIsMobileMenuOpen }: { posts: any
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const sortMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showSortMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (sortMenuRef.current && !sortMenuRef.current.contains(e.target as Node)) {
+        setShowSortMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showSortMenu]);
 
   useEffect(() => {
     if (!posts.length) {
@@ -197,12 +209,12 @@ export default function CommentsTab({ posts, setIsMobileMenuOpen }: { posts: any
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative" ref={sortMenuRef}>
           <button onClick={() => setShowSortMenu(v => !v)}
             className="h-11 px-4 bg-[#121212] border border-white/[0.07] rounded-xl flex items-center gap-2 text-white/50 hover:text-white text-[12px] font-semibold transition-colors whitespace-nowrap">
-            <ArrowUpDown className="w-3.5 h-3.5" />
+            <ArrowUpDown className="w-3.5 h-3.5" aria-hidden="true" />
             {sort === 'newest' ? 'Newest' : 'Oldest'}
-            <ChevronDown className="w-3 h-3" />
+            <ChevronDown className="w-3 h-3" aria-hidden="true" />
           </button>
           <AnimatePresence>
             {showSortMenu && (

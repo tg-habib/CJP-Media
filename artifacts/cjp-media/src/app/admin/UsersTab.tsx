@@ -1,19 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   collection, onSnapshot, doc, updateDoc, deleteDoc,
-  setDoc, getDocs, query, orderBy, limit, getDoc, serverTimestamp
+  setDoc, getDocs, serverTimestamp
 } from 'firebase/firestore';
 import { db } from '../../firebase';
 import {
-  Search, Shield, Ban, Trash2, ChevronDown, X, ExternalLink,
-  RefreshCw, User, Calendar, Heart, Bookmark, MessageSquare,
-  MoreHorizontal, CheckCircle, XCircle, Crown, Eye, Filter,
-  ArrowUpDown, UserCheck, UserX, Users, ShieldCheck, AlertTriangle,
-  Mail, Clock, BarChart2, Activity, ChevronRight, Hash
+  Search, Ban, Trash2, ChevronDown, X, ExternalLink,
+  RefreshCw, User, Calendar, Heart, Bookmark,
+  CheckCircle, Crown, Eye, Filter,
+  ArrowUpDown, UserCheck, UserX, Users, ShieldCheck,
+  Mail, Clock, Activity, ChevronRight, Hash
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link } from 'wouter';
 
 type UserRecord = {
   uid: string;
@@ -89,8 +88,12 @@ function UserDrawer({ user, onClose, onBan, onUnban, onMakeAdmin, onRevokeAdmin,
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06] sticky top-0 bg-[#0e0e0e] z-10">
         <span className="text-[11px] font-bold text-white/30 uppercase tracking-[0.15em]">User Details</span>
-        <button onClick={onClose} className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
-          <X className="w-4 h-4 text-white/50" />
+        <button
+          onClick={onClose}
+          aria-label="Close user details panel"
+          className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ccff00]/60"
+        >
+          <X className="w-4 h-4 text-white/50" aria-hidden="true" />
         </button>
       </div>
 
