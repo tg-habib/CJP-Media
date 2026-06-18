@@ -23,7 +23,7 @@ export default function Header({ settings }: { settings?: any }) {
 
   return (
     <>
-      <header className="sticky top-4 z-50 flex justify-center w-full px-4 sm:px-6 pointer-events-none mb-6">
+      <header className="sticky top-4 z-50 flex justify-center w-full px-4 sm:px-6 pointer-events-none mb-0">
         <nav className="w-full max-w-4xl h-14 bg-[#111111]/90 backdrop-blur-2xl border border-white/[0.08] rounded-full flex items-center justify-between px-2 sm:px-3 shadow-[0_8px_40px_rgba(0,0,0,0.6)] pointer-events-auto">
 
           {/* Logo */}
