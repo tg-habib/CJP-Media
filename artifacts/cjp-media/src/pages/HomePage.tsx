@@ -231,6 +231,15 @@ export default function HomePage() {
     )
     .slice(0, 5);
 
+  /* ticker — custom messages take priority over latest post titles */
+  const _customItems: string[] = profileSettings?.tickerItems || [];
+  const tickerEntries: string[] =
+    profileSettings?.tickerMode === 'custom' && _customItems.length > 0
+      ? _customItems
+      : latestPosts.length > 0
+        ? latestPosts.slice(0, 8).map((p: any) => p.title)
+        : ["Voice of the Real Majority", "CJP Media — Unfiltered", "Stay Awake. Stay Janta."];
+
   return (
     <>
       <Helmet>
@@ -257,24 +266,12 @@ export default function HomePage() {
             <div className="flex animate-marquee whitespace-nowrap">
               {[0, 1].map(i => (
                 <div key={i} className="flex items-center gap-8 text-white/35 text-[11px] font-medium px-5 shrink-0">
-                  {latestPosts.length > 0
-                    ? latestPosts.slice(0, 8).map((p, idx) => (
-                        <span key={idx} className="flex items-center gap-2 shrink-0">
-                          <span className="w-[5px] h-[5px] rounded-full bg-[#ccff00]/70 shrink-0" />
-                          {p.title}
-                        </span>
-                      ))
-                    : (
-                      <>
-                        {["Voice of the Real Majority", "CJP Media — Unfiltered", "Stay Awake. Stay Janta."].map((t, idx) => (
-                          <span key={idx} className="flex items-center gap-2 shrink-0">
-                            <span className="w-[5px] h-[5px] rounded-full bg-[#ccff00]/70" />
-                            {t}
-                          </span>
-                        ))}
-                      </>
-                    )
-                  }
+                  {tickerEntries.map((text, idx) => (
+                    <span key={idx} className="flex items-center gap-2 shrink-0">
+                      <span className="w-[5px] h-[5px] rounded-full bg-[#ccff00]/70 shrink-0" />
+                      {text}
+                    </span>
+                  ))}
                 </div>
               ))}
             </div>

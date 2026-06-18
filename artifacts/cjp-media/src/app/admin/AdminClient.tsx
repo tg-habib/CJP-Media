@@ -164,6 +164,8 @@ export default function Admin() {
   const [profileFooterUrl, setProfileFooterUrl] = useState('');
   const [profileHeroPosition, setProfileHeroPosition] = useState('center');
   const [profileMobileHeroPosition, setProfileMobileHeroPosition] = useState('center');
+  const [tickerMode, setTickerMode] = useState<'auto' | 'custom'>('auto');
+  const [tickerItems, setTickerItems] = useState<string[]>(['Voice of the Real Majority', 'CJP Media — Unfiltered', 'Stay Awake. Stay Janta.']);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [isUploadingCover, setIsUploadingCover] = useState(false);
@@ -244,6 +246,8 @@ export default function Admin() {
         setProfileFooterUrl(profile.footerUrl || '');
         setProfileHeroPosition(profile.heroPosition || 'center');
         setProfileMobileHeroPosition(profile.mobileHeroPosition || 'center');
+        setTickerMode(profile.tickerMode || 'auto');
+        setTickerItems(profile.tickerItems?.length ? profile.tickerItems : ['Voice of the Real Majority', 'CJP Media — Unfiltered', 'Stay Awake. Stay Janta.']);
       }
     };
     fetchSettings();
@@ -366,7 +370,9 @@ export default function Admin() {
         mobileHeroUrl: profileMobileHeroUrl,
         footerUrl: profileFooterUrl,
         heroPosition: profileHeroPosition,
-        mobileHeroPosition: profileMobileHeroPosition
+        mobileHeroPosition: profileMobileHeroPosition,
+        tickerMode,
+        tickerItems: tickerItems.filter(t => t.trim()),
       });
       if (res.success) {
         toast.success("Profile saved successfully");
@@ -1040,6 +1046,86 @@ export default function Admin() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                {/* TICKER STRIP */}
+                <div className="bg-[#0c0c0c] border border-white/[0.07] rounded-2xl p-6">
+                  <div className="flex items-center gap-2.5 mb-6">
+                    <div className="w-[3px] h-4 rounded-full bg-[#ff4500]" />
+                    <h3 className="font-bold text-white text-[14px] tracking-tight">Ticker Strip</h3>
+                    <span className="text-[11px] text-white/20 font-medium">· Scrolling news bar at the top of the homepage</span>
+                  </div>
+
+                  {/* Mode toggle */}
+                  <div className="flex gap-2 mb-5 p-1 bg-white/[0.03] rounded-xl border border-white/[0.05] w-fit">
+                    {(['auto', 'custom'] as const).map(mode => (
+                      <button key={mode} type="button" onClick={() => setTickerMode(mode)}
+                        className={`px-5 py-2 rounded-lg text-[12px] font-bold transition-all ${tickerMode === mode ? 'bg-[#ccff00] text-black shadow-sm' : 'text-white/35 hover:text-white'}`}>
+                        {mode === 'auto' ? '⚡ Auto — Latest Posts' : '✏️ Custom Messages'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {tickerMode === 'auto' ? (
+                    <div className="flex items-start gap-3 bg-white/[0.03] border border-white/[0.05] rounded-xl p-4">
+                      <div className="w-2 h-2 rounded-full bg-[#ccff00] shrink-0 mt-1.5 animate-pulse" />
+                      <p className="text-[12px] text-white/35 leading-relaxed">
+                        The ticker automatically scrolls your latest post titles. Switch to <span className="text-white/60 font-semibold">Custom Messages</span> to write your own slogans, announcements, or breaking news text.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {tickerItems.map((item, i) => (
+                        <div key={i} className="flex gap-2.5 items-center">
+                          <span className="w-6 h-6 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-[10px] font-bold text-white/25 shrink-0 tabular-nums">{i + 1}</span>
+                          <input
+                            value={item}
+                            onChange={e => setTickerItems(prev => prev.map((v, j) => j === i ? e.target.value : v))}
+                            placeholder="Enter ticker message…"
+                            className="flex-1 bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 h-10 text-white text-[13px] font-medium placeholder-white/15 outline-none focus:border-[#ccff00]/40 focus:bg-white/[0.06] transition-all"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setTickerItems(prev => prev.filter((_, j) => j !== i))}
+                            className="w-9 h-9 rounded-xl bg-red-500/[0.08] hover:bg-red-500/[0.15] text-red-400/50 hover:text-red-400 transition-all flex items-center justify-center border border-red-500/[0.08] shrink-0"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => setTickerItems(prev => [...prev, ''])}
+                        className="w-full mt-1 py-2.5 rounded-xl border border-dashed border-white/[0.10] hover:border-[#ccff00]/30 text-white/25 hover:text-[#ccff00]/60 text-[12px] font-semibold transition-all hover:bg-[#ccff00]/[0.02] flex items-center justify-center gap-1.5"
+                      >
+                        <PlusCircle className="w-3.5 h-3.5" /> Add Message
+                      </button>
+
+                      {/* inline mini preview */}
+                      {tickerItems.some(t => t.trim()) && (
+                        <div className="mt-2 w-full bg-[#080808] border border-white/[0.06] rounded-xl h-9 flex items-center overflow-hidden">
+                          <div className="shrink-0 bg-[#ccff00] text-black text-[9px] font-black uppercase tracking-[0.2em] px-3 h-full flex items-center gap-1 whitespace-nowrap">
+                            <Radio className="w-2.5 h-2.5" strokeWidth={2.5} /> LIVE
+                          </div>
+                          <div className="flex-1 overflow-hidden relative">
+                            <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#080808] to-transparent z-10 pointer-events-none" />
+                            <div className="flex animate-marquee whitespace-nowrap">
+                              {[0, 1].map(k => (
+                                <div key={k} className="flex items-center gap-6 text-white/40 text-[11px] font-medium px-4 shrink-0">
+                                  {tickerItems.filter(t => t.trim()).map((t, idx) => (
+                                    <span key={idx} className="flex items-center gap-1.5 shrink-0">
+                                      <span className="w-[4px] h-[4px] rounded-full bg-[#ccff00]/60 shrink-0" />
+                                      {t}
+                                    </span>
+                                  ))}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* MEDIA ASSETS */}
